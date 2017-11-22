@@ -1,3 +1,5 @@
+//http://www.zentut.com/java-swing/simple-login-dialog/
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

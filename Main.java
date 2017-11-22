@@ -4,8 +4,6 @@ import javax.swing.*;
 import java.sql.*;
 
 public class Main {
-	static Connection con;
-	
 	public static void main(String[] args) {
 		//Load driver for mysql connection
         try {
@@ -19,11 +17,13 @@ public class Main {
 		LoginDialog loginDlg = new LoginDialog();
     		loginDlg.setVisible(true);
 
-    		//After login window is closed, open options for gui
+    		//After login window is closed, 
+    		//Open main menu if login successful
+    		//Else give show message and close program
     		loginDlg.addWindowListener(new WindowAdapter() {
     			public void windowClosed(WindowEvent e) {
     				if(loginDlg.isSucceeded()){
-    					con = loginDlg.getConnection();
+    					openMainMenu(loginDlg.getConnection());
     				} else {
     					JDialog failed = new JDialog();
     					failed.setVisible(true);
@@ -32,5 +32,20 @@ public class Main {
     				}
     			}
     		});
+	}
+	
+	public static void openMainMenu(Connection con) {
+		MainMenu menu = new MainMenu(con);
+		menu.setVisible(true);
+		
+		menu.addWindowListener(new WindowAdapter() {
+			public void windowClosed(WindowEvent e) {
+				try {
+					con.close();
+				} catch (SQLException e1) {
+					//Do Nothing
+				}
+			}
+		});
 	}
 }
