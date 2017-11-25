@@ -7,22 +7,18 @@
 
 import javax.swing.*;
 
-public class popUp extends JFrame{
+public class PopUp extends JFrame{
 
-    public popUp(JScrollPane sPane, String TITLE){
-
-        JTextField viewTITLE = new JTextField(TITLE);
-
+    public PopUp(JScrollPane sPane, String TITLE){
+        this.setTitle(TITLE);
+        
         setSize(800,400);
         setLocation(600,300);
 
         JPanel p = new JPanel();
-        p.add(viewTITLE);
         p.add(sPane);
         add(p);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
     }
-
-
 }
