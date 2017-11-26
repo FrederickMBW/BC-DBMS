@@ -9,8 +9,8 @@ public class JPAddEquivalentCourse extends JPanel {
     private JLabel lbCID1;
 	private JTextField tfCID2;
     private JLabel lbCID2;
-	private JTextField tfIsEquivalent;
     private JLabel lbIsEquivalent;
+    private JComboBox<String> jbTrueFalse;
 	private JTextField tfComment;
     private JLabel lbComment;
     private JButton btnAdd;
@@ -54,11 +54,12 @@ public class JPAddEquivalentCourse extends JPanel {
         cs.gridwidth = 1;
         this.add(lbIsEquivalent, cs);
         
-        tfIsEquivalent = new JTextField(20);
+        String[] aryTrueFalse = {"True", "False"};
+        jbTrueFalse = new JComboBox<String>(aryTrueFalse);
         cs.gridx = 1;
         cs.gridy = 2;
         cs.gridwidth = 1;
-        this.add(tfIsEquivalent, cs);
+        this.add(jbTrueFalse, cs);
         
         lbComment = new JLabel("Comment:");
         cs.gridx = 0;
@@ -102,7 +103,7 @@ public class JPAddEquivalentCourse extends JPanel {
     
 	//Return if the course if equivalent
     public String getIsEquivalent() {
-    		return tfIsEquivalent.getText().trim();
+    		return jbTrueFalse.getItemAt(jbTrueFalse.getSelectedIndex());
     }
     
 	//Return the comment
@@ -118,6 +119,5 @@ public class JPAddEquivalentCourse extends JPanel {
     		String strComment = getComment().trim();
 
     		Queries.addEquivalentCourse(con, Integer.parseInt(strCID1), Integer.parseInt(strCID2), Boolean.valueOf(strIsEquivalent), strComment);
-
     }
 }
