@@ -47,7 +47,7 @@ public class JPUpdateSchool extends JPanel {
         cs.gridwidth = 1;
         this.add(lbOID, cs);
         
-        tfOID = new JTextField(20);
+        tfOID = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 1;
         cs.gridwidth = 1;
@@ -59,7 +59,7 @@ public class JPUpdateSchool extends JPanel {
         cs.gridwidth = 1;
         this.add(lbName, cs);
         
-        tfName = new JTextField(20);
+        tfName = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 2;
         cs.gridwidth = 1;
@@ -71,7 +71,7 @@ public class JPUpdateSchool extends JPanel {
         cs.gridwidth = 1;
         this.add(lbAddress, cs);
         
-        tfAddress = new JTextField(20);
+        tfAddress = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 3;
         cs.gridwidth = 1;
@@ -83,7 +83,7 @@ public class JPUpdateSchool extends JPanel {
         cs.gridwidth = 1;
         this.add(lbCity, cs);
         
-        tfCity = new JTextField(20);
+        tfCity = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 4;
         cs.gridwidth = 1;
@@ -95,7 +95,7 @@ public class JPUpdateSchool extends JPanel {
         cs.gridwidth = 1;
         this.add(lbState, cs);
         
-        tfState = new JTextField(20);
+        tfState = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 5;
         cs.gridwidth = 1;
@@ -107,7 +107,7 @@ public class JPUpdateSchool extends JPanel {
         cs.gridwidth = 1;
         this.add(lbZip, cs);
         
-        tfZip = new JTextField(20);
+        tfZip = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 6;
         cs.gridwidth = 1;
@@ -136,14 +136,14 @@ public class JPUpdateSchool extends JPanel {
         
         //Load every time a new SID is selected from the drop down
         jbAllSID.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
-    			try {
-				loadSchool(con);
-			} catch (SQLException|NumberFormatException e1) {
-				JOptionPane.showMessageDialog(JPUpdateSchool.this, "Load Failed", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-        }
-    });
+	    		public void actionPerformed(ActionEvent e) {
+	    			try {
+	    				loadSchool(con);
+	    			} catch (SQLException|NumberFormatException e1) {
+	    				JOptionPane.showMessageDialog(JPUpdateSchool.this, "Load Failed", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+	    		}
+        });
 	}
 	
 	//Return every SID in a sorted array

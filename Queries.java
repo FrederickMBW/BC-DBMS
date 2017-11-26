@@ -53,11 +53,9 @@ public class Queries {
 	}
 	
 	//Get the SID of every school
-	//TODO - Use the a view of every SID instead of a query
-	//TODO - Or use the school table to get every SID instead of a query
 	public static ResultSet getEverySID(Connection con) throws SQLException {
-    		CallableStatement cst = con.prepareCall("{call GetEverySID()}");
-		return cst.executeQuery();
+		java.sql.Statement stmt = con.createStatement();
+		return stmt.executeQuery("SELECT * FROM EverySID");
 	}
 	
 	//get Course number for every course with a matching information not using the SID
@@ -78,6 +76,25 @@ public class Queries {
 		cst.setString(3,  department);
 		cst.setInt(4,  SID);
 		return cst.executeQuery();
+	}
+	
+	//Get the name of the course and the school's name
+	public static ResultSet getCourseNameAndSchool(Connection con, int CID) throws SQLException {
+		CallableStatement cst = con.prepareCall("{call getCourseNameAndSchool(?)}");
+		cst.setInt(1, CID);
+		return cst.executeQuery();
+	}
+	
+	//Get every course CID in the database
+	public static ResultSet getAllCID(Connection con) throws SQLException {
+		java.sql.Statement stmt = con.createStatement();
+		return stmt.executeQuery("SELECT * FROM EveryCID");
+	}
+	
+	//Get every course CID from BC in the database
+	public static ResultSet getAllBCCID(Connection con) throws SQLException  {
+		java.sql.Statement stmt = con.createStatement();
+		return stmt.executeQuery("SELECT * FROM EveryBCCID");
 	}
 
 	//Add a course to the database
