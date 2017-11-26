@@ -86,9 +86,9 @@ public class Queries {
 	}
 	
 	//Get every course CID in the database
-	public static ResultSet getAllCID(Connection con) throws SQLException {
+	public static ResultSet getAllNonBCCID(Connection con) throws SQLException {
 		java.sql.Statement stmt = con.createStatement();
-		return stmt.executeQuery("SELECT * FROM EveryCID");
+		return stmt.executeQuery("SELECT * FROM EVERYNONBCCID");
 	}
 	
 	//Get every course CID from BC in the database
@@ -121,12 +121,30 @@ public class Queries {
 		return cst.executeQuery();
 	}
 	
+	//Get Equivalent course information
+	public static ResultSet getEquivalentInfo (Connection con, int CID1, int CID2) throws SQLException {
+		CallableStatement cst = con.prepareCall("{call getEquivalentInfo(?,?)}");
+		cst.setInt(1, CID1);
+		cst.setInt(2, CID2);
+		return cst.executeQuery();
+	}
+	
 	//Get set of equivalent and non-equivalent courses when given BC course name, other course name, and other school name
 	public static ResultSet isEquivilent (Connection con, String bellvueCollegeCourseName, String otherCourseName, String otherCourseSchoolName) throws SQLException {
 		CallableStatement cst = con.prepareCall("{call isEquivilent(?,?,?)}");
 		cst.setString(1, bellvueCollegeCourseName);
 		cst.setString(2, otherCourseName);
 		cst.setString(3, otherCourseSchoolName);
+		return cst.executeQuery();
+	}
+	
+	//Get set of equivalent and non-equivalent courses when given BC course name, other course name, and other school name
+	public static ResultSet updateCourseEquivalent(Connection con, int CID1, int CID2, boolean isEquiv, String comment) throws SQLException {
+		CallableStatement cst = con.prepareCall("{call UpdateEQUIVALENT(?,?,?,?)}");
+		cst.setInt(1, CID1);
+		cst.setInt(2, CID2);
+		cst.setBoolean(3, isEquiv);
+		cst.setString(4, comment);
 		return cst.executeQuery();
 	}
 	

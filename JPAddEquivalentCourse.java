@@ -6,25 +6,15 @@ import java.util.Arrays;
 
 @SuppressWarnings("serial")
 public class JPAddEquivalentCourse extends JPanel {
-	private JComboBox<Integer> jbAllBCCID;
-    private JLabel lbCID1;
-	private JComboBox<Integer> jbAllCID;
-    private JLabel lbCID2;
-    private JLabel lbIsEquivalent;
-    private JComboBox<String> jbTrueFalse;
-	private JTextField tfComment;
-    private JLabel lbComment;
-    private JTextField tfCourseName1;
-    private JTextField tfCourseSchool1;
-    private JTextField tfCourseName2;
-    private JTextField tfCourseSchool2;
-    private JButton btnAdd;
+	private JComboBox<Integer> jbAllBCCID, jbAllOtherCID;
+	private JComboBox<String> jbIsEquivalent;
+    private JLabel lbCID1, lbCID2, lbIsEquivalent, lbComment, lbModified;
+	private JTextField tfComment, tfCourseName1, tfCourseSchool1, tfCourseName2, tfCourseSchool2, tfDate;
+    private JButton btnAdd, btnUpdate;
 
 	public JPAddEquivalentCourse(Connection con) throws SQLException {
 		super(new GridBagLayout());
-
         GridBagConstraints cs = new GridBagConstraints();
- 
         cs.fill = GridBagConstraints.HORIZONTAL; 
         
         lbCID1 = new JLabel("CID1:");
@@ -61,11 +51,11 @@ public class JPAddEquivalentCourse extends JPanel {
         this.add(lbCID2, cs);
         
         Integer[] aryAllCID = getAllCID(con);
-        jbAllCID = new JComboBox<Integer>(aryAllCID);
+        jbAllOtherCID = new JComboBox<Integer>(aryAllCID);
         cs.gridx = 1;
         cs.gridy = 1;
         cs.gridwidth = 1;
-        this.add(jbAllCID, cs);
+        this.add(jbAllOtherCID, cs);
         
         tfCourseName2 = new JTextField(20);
         tfCourseName2.setEditable(false);
@@ -87,12 +77,12 @@ public class JPAddEquivalentCourse extends JPanel {
         cs.gridwidth = 1;
         this.add(lbIsEquivalent, cs);
         
-        String[] aryTrueFalse = {"True", "False"};
-        jbTrueFalse = new JComboBox<String>(aryTrueFalse);
+        String[] aryTrueFalse = {"True", "False", "Unknown"};
+        jbIsEquivalent = new JComboBox<String>(aryTrueFalse);
         cs.gridx = 1;
         cs.gridy = 2;
         cs.gridwidth = 1;
-        this.add(jbTrueFalse, cs);
+        this.add(jbIsEquivalent, cs);
         
         lbComment = new JLabel("Comment:");
         cs.gridx = 0;
@@ -105,44 +95,86 @@ public class JPAddEquivalentCourse extends JPanel {
         cs.gridy = 3;
         cs.gridwidth = 1;
         this.add(tfComment, cs);
-   
-        btnAdd = new JButton("Add Equivalent Course");
+        
+        lbModified = new JLabel("Last Modified:");
+        cs.gridx = 0;
+        cs.gridy = 9;
+        cs.gridwidth = 1;
+        this.add(lbModified, cs);
+        
+        tfDate = new JTextField(20);
+        tfDate.setEditable(false);
+        tfDate.setBackground(Color.LIGHT_GRAY);
         cs.gridx = 1;
         cs.gridy = 9;
         cs.gridwidth = 1;
+        this.add(tfDate, cs);
+   
+        btnAdd = new JButton("Add Equivalent Course");
+        cs.gridx = 1;
+        cs.gridy = 10;
+        cs.gridwidth = 1;
         this.add(btnAdd, cs);
         
-        //Load course information
-        loadCourse1(con);
-        loadCourse2(con);
+        btnUpdate= new JButton("Update Course");
+        cs.gridx = 2;
+        cs.gridy = 10;
+        cs.gridwidth = 1;
+        this.add(btnUpdate, cs);
         
+        //Update the window with correct information
+        updateCourse1(con);
+        updateCourse2(con);
+        updateWindow(con);
+        
+        //Active listener for the add button
         btnAdd.addActionListener(new ActionListener() {
         		public void actionPerformed(ActionEvent e) {
         			try {
-					addCourse(con);
+        				addCourse(con);
+        				updateWindow(con);
 					JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "You have successfully added an equivalent course.", "Nice Job!", JOptionPane.INFORMATION_MESSAGE);
 				} catch (SQLException|NumberFormatException e1) {
-					JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "Error 404", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "Add Fail", "Error", JOptionPane.ERROR_MESSAGE);
 				}
             }
+        });
+        
+        //Active listener for the update button
+        btnUpdate.addActionListener(new ActionListener() {
+	    		public void actionPerformed(ActionEvent e) {
+	    			try {
+	    				ResultSet rs = Queries.getEquivalentInfo(con, getCID1(), getCID2());
+	    				if (rs.next()) {
+	    					updateCourse(con);
+	    					JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "You have successfully updated an equivalent course.", "Nice Job!", JOptionPane.INFORMATION_MESSAGE);
+	    				} else {
+	    					JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "Create Equivalent Course First!", "Error", JOptionPane.ERROR_MESSAGE);
+	    				}
+				} catch (SQLException|NumberFormatException e1) {
+					JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "Update Failed", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+	        }
         });
         
         //Load Course Name and School for CID1 Every time drop down is adjusted
         jbAllBCCID.addActionListener(new ActionListener() {
 	    		public void actionPerformed(ActionEvent e) {
 	    			try {
-	    				loadCourse1(con);
+	    				updateCourse1(con);
+	    				updateWindow(con);
 	    			} catch (SQLException|NumberFormatException e1) {
-	    				JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "Erro", "Error", JOptionPane.ERROR_MESSAGE);
+	    				JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "Error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 	    		}
         });
         
       //Load Course Name and School for CID2 Every time drop down is adjusted
-        jbAllCID.addActionListener(new ActionListener() {
+        jbAllOtherCID.addActionListener(new ActionListener() {
 	    		public void actionPerformed(ActionEvent e) {
 	    			try {
-	    				loadCourse2(con);
+	    				updateCourse2(con);
+	    				updateWindow(con);
 	    			} catch (SQLException|NumberFormatException e1) {
 	    				JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "Error", "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -150,7 +182,7 @@ public class JPAddEquivalentCourse extends JPanel {
         });
 	}
 	
-	//Return every CID from Bellevue College
+	//Return every Bellevue College CID in ascending order
 	public Integer[] getAllBCCID(Connection con) throws SQLException {
 		ResultSet rsAllBCCID = Queries.getAllBCCID(con);
 		
@@ -168,17 +200,17 @@ public class JPAddEquivalentCourse extends JPanel {
 		return result;
 	}
 	
-	//Return every CID
+	//Return every non-Bellevue College CID in ascending order
 	public Integer[] getAllCID(Connection con) throws SQLException {
-		ResultSet rsAllCID = Queries.getAllCID(con);
+		ResultSet rsAllNonBCCID = Queries.getAllNonBCCID(con);
 		
-		int rows = getRowCount(rsAllCID);
+		int rows = getRowCount(rsAllNonBCCID);
 		
 		Integer[] result = new Integer[rows];
 		
 		for (int i = 0; i < rows; i++) {
-			rsAllCID.next();
-			result[i] = rsAllCID.getInt(1);
+			rsAllNonBCCID.next();
+			result[i] = rsAllNonBCCID.getInt(1);
 		}
 		
 		Arrays.sort(result);
@@ -203,22 +235,22 @@ public class JPAddEquivalentCourse extends JPanel {
     		return (int) jbAllBCCID.getSelectedItem();
     }
     
-	//Return the course name
+	//Return the course name (Non-BC course)
     public int getCID2() {
-    	return (int) jbAllCID.getSelectedItem();
+    	return (int) jbAllOtherCID.getSelectedItem();
     }
     
-	//Return if the course if equivalent
+	//Return if the courses are equivalent
     public String getIsEquivalent() {
-    		return (String) jbTrueFalse.getSelectedItem();
+    		return (String) jbIsEquivalent.getSelectedItem();
     }
     
-	//Return the comment
+	//Return the course equivalent comment
     public String getComment() {
         return tfComment.getText().trim();
     }
 
-    //Create a pop up for the result of the search
+    //Add a course equivalancy to the database
     public void addCourse(Connection con) throws SQLException, NumberFormatException {
     		int intCID1 = getCID1();
     		int intCID2 = getCID2();
@@ -228,8 +260,8 @@ public class JPAddEquivalentCourse extends JPanel {
     		Queries.addEquivalentCourse(con, intCID1, intCID2, Boolean.valueOf(strIsEquivalent), strComment);
     }
     
-    //Update the data for course1
-    public void loadCourse1(Connection con) throws SQLException, NumberFormatException {
+    //Update the information shown for course1
+    public void updateCourse1(Connection con) throws SQLException, NumberFormatException {
     		int intCID = getCID1();
     	
     		ResultSet rs = Queries.getCourseNameAndSchool(con, intCID);
@@ -241,8 +273,8 @@ public class JPAddEquivalentCourse extends JPanel {
     		}
     }
     
-    //Update the data for course2
-    public void loadCourse2(Connection con) throws SQLException, NumberFormatException {
+    //Update the information shown for course2
+    public void updateCourse2(Connection con) throws SQLException, NumberFormatException {
     		int intCID = getCID2();
     	
     		ResultSet rs = Queries.getCourseNameAndSchool(con, intCID);
@@ -253,4 +285,51 @@ public class JPAddEquivalentCourse extends JPanel {
     			JOptionPane.showMessageDialog(JPAddEquivalentCourse.this, "Course Not Found", "Error", JOptionPane.ERROR_MESSAGE);
     		}
     }
+    
+    //Update the window information
+    public void updateWindow(Connection con) throws SQLException, NumberFormatException {
+    		ResultSet rs = Queries.getEquivalentInfo(con, getCID1(), getCID2());
+    		updateComment(con, rs);
+    		updateEquivalent(con, rs);
+    		updateDate(con, rs);
+    }
+    
+    //Update the comment for the two selected courses
+    public void updateComment(Connection con, ResultSet rs) throws SQLException {
+    		if (rs.next()) {
+    			tfComment.setText(rs.getString(2));
+    		} else {
+    			tfComment.setText("");
+    		}
+    		rs.beforeFirst();
+    }
+    
+    //Update if the courses are equivalent
+    public void updateEquivalent(Connection con, ResultSet rs) throws SQLException {
+    		if (rs.next()) {
+    			if (rs.getBoolean(1) == true) {
+    				jbIsEquivalent.setSelectedIndex(0);
+    			} else {
+    				jbIsEquivalent.setSelectedIndex(1);
+    			}
+    		} else {
+    			jbIsEquivalent.setSelectedIndex(2);
+    		}
+    		rs.beforeFirst();
+    }
+    
+    //Update if the courses are equivalent
+    public void updateDate(Connection con, ResultSet rs) throws SQLException {
+    		if (rs.next()) {
+    			tfDate.setText(rs.getDate(3).toString()); 
+    		} else {
+    			tfDate.setText("");
+    		}
+    		rs.beforeFirst();
+    }
+    
+   //Update a course equivalency
+   public void updateCourse(Connection con) throws SQLException {
+	   Queries.updateCourseEquivalent(con, getCID1(), getCID2(), Boolean.parseBoolean(getIsEquivalent()), getComment());
+   }
 }

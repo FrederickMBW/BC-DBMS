@@ -17,6 +17,43 @@ CREATE TABLE SCHOOL (
     UNIQUE KEY (SNAME, ADDRESS, CITY, STATE, ZIPCODE)
 );
 
+#Add a school to the database
+DROP PROCEDURE IF EXISTS UpdateSCHOOL;
+DELIMITER //
+CREATE PROCEDURE UpdateSCHOOL
+(IN inSID INTEGER, IN inOID VARCHAR(100), IN inSNAME VARCHAR(100), IN inADDRESS VARCHAR(100), IN inCITY VARCHAR(100), IN inSTATE VARCHAR(100), IN inZIPCODE VARCHAR(100))
+BEGIN
+UPDATE 
+	SCHOOL
+SET 
+	OID = inOID, SNAME = inSNAME, ADDRESS = inADDRESS, CITY = inCITY, STATE = inSTATE, ZIPCODE = inZIPCODE
+WHERE 	
+	SID = inSID;
+END //
+DELIMITER ;
+
+DROP VIEW IF EXISTS EVERYSID;
+CREATE VIEW EVERYSID
+AS SELECT
+	SID
+FROM
+	SCHOOL;
+    
+#Get set of every SID like given school name
+DROP PROCEDURE IF EXISTS getInfoSID;
+DELIMITER //
+CREATE PROCEDURE getInfoSID
+(IN inSID VARCHAR(100))
+BEGIN
+SELECT 
+    *
+FROM
+    SCHOOL
+WHERE
+	SID = inSID;
+END //
+DELIMITER ;
+
 LOAD DATA LOCAL INFILE '/Users/frederickmbw/SQL/Project/fafsaschools.txt' INTO TABLE School 
 (OID, SNAME, ADDRESS, CITY, STATE, ZIPCODE);
 
@@ -68,6 +105,24 @@ CREATE TABLE COURSE (
 	UNIQUE KEY (SID, CNAME)
 );
 
+DROP VIEW IF EXISTS EVERYBCCID;
+CREATE VIEW EVERYBCCID AS
+    SELECT 
+        CID
+    FROM
+        COURSE
+    WHERE
+        SID = 1;
+        
+DROP VIEW IF EXISTS EVERYNONBCCID;
+CREATE VIEW EVERYNONBCCID AS
+    SELECT 
+        CID
+    FROM
+        COURSE
+    WHERE
+        SID <> 1;
+
 #Add a course to the database
 DROP PROCEDURE IF EXISTS AddCourse;
 DELIMITER //
@@ -117,6 +172,23 @@ WHERE
 END //
 DELIMITER ;
 
+#Get set of every CID with given course name and SID
+DROP PROCEDURE IF EXISTS getCourseNameAndSchool;
+DELIMITER //
+CREATE PROCEDURE getCourseNameAndSchool
+(inCID INTEGER)
+BEGIN
+SELECT 
+	C.CNAME, S.SNAME
+FROM
+    COURSE AS C,
+    SCHOOL AS S
+WHERE
+	C.CID = inCID
+    AND S.SID = C.SID;
+END //
+DELIMITER ;
+
 INSERT INTO COURSE (SID, CNAME, TITLE, DEPARTMENT, CREDITS, DESCRIPTION, COURSE_OUTCOMES)
 VALUES 
 (1, "CS 101", "Technology and Computer Science", "Computer Science", "5", "Introduces concepts of computer science through development of fluency in modern technology, while offering students an opportunity to increase skills in a variety of information systems. Computer lab work includes operation of computers on networks, programming fundamentals, logical reasoning, web searching, multimedia applications, basic spreadsheets, and database manipulation.", "Identify standard human-computer interfaces using industry standard terminology. Describe network components of computers and associated storage systems. Effectively search the Internet and use information to create a basic html web page. Describe similarities and differences between binary and decimal systems. Provide a descriptive algorithm for solving a problem. Identify digital versus analog representations of pictures and sounds. Identify and explain common spreadsheet functions and capabilities. Identify and explain common database management functions and capabilities Explain what a program is, and how a program is produced."),
@@ -140,6 +212,19 @@ CREATE TABLE EQUIVALENT_COURSES (
     FOREIGN KEY (COURSE2)
         REFERENCES COURSE (CID)
 );
+
+#Add a school to the database
+DROP PROCEDURE IF EXISTS UpdateEQUIVALENT;
+DELIMITER //
+CREATE PROCEDURE UpdateEQUIVALENT
+(IN inCID1 INTEGER, inCID2 INTEGER, inIS_EQUIVALENT BOOL, inEC_COMMENT VARCHAR(140))
+BEGIN
+UPDATE EQUIVALENT_COURSES
+SET COURSE1 = inCID1, COURSE2 = inCID2, IS_EQUIVALENT = inIS_EQUIVALENT, EC_COMMENT = inEC_COMMENT, APPROVED = CURDATE()
+WHERE 	inCID1 = COURSE1 
+		AND inCID2 = COURSE2;
+END //
+DELIMITER ;
 
 #Make two courses equivalent
 DROP PROCEDURE IF EXISTS AddEquivalentCourse;
@@ -181,9 +266,9 @@ DELIMITER ;
 
 INSERT INTO EQUIVALENT_COURSES (COURSE1, COURSE2, IS_EQUIVALENT, EC_COMMENT, APPROVED)
 VALUES 
-(1, 6, TRUE, "e2asdf", CURDATE()),
-(1, 7, TRUE, "33wdfasd", CURDATE()),
-(1, 5, FALSE, "asdf32", CURDATE());
+(1, 6, TRUE, "What?", CURDATE()),
+(1, 7, TRUE, "Sure?", CURDATE()),
+(2, 6, FALSE, "Okay?", CURDATE());
 
 #Set of equivalent and non-equivalent courses when given BC course name, other course name, and other school SID
 DROP PROCEDURE IF EXISTS isEquivilentSID;
@@ -230,6 +315,22 @@ WHERE
     AND C2.CNAME LIKE OTHER_COURSE_NAME
     AND C2.SID = S.SID
     AND S.SNAME LIKE OTHER_COURSE_SCHOOL_NAME;
+END //
+DELIMITER ;
+
+#Set of equivalent and non-equivalent courses when given BC course name, other course name, and other school name
+DROP PROCEDURE IF EXISTS getEquivalentInfo;
+DELIMITER //
+CREATE PROCEDURE getEquivalentInfo
+(IN inCID1 INTEGER, inCID2 INTEGER)
+BEGIN
+SELECT 
+	IS_EQUIVALENT, EC_COMMENT, APPROVED
+FROM
+	EQUIVALENT_COURSES
+WHERE
+	COURSE1 = inCID1
+    AND COURSE2 = inCID2;
 END //
 DELIMITER ;
 
