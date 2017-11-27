@@ -6,20 +6,28 @@ import java.util.Arrays;
 
 @SuppressWarnings("serial")
 public class JPUpdateCourse extends JPanel {
-	private JComboBox<Integer> jbAllSID;
+	private JComboBox<Integer> jbAllCID;
+    private JLabel lbCID;
+	private JTextField tfSID;
     private JLabel lbSID;
-	private JTextField tfOID;
-    private JLabel lbOID;
 	private JTextField tfName;
     private JLabel lbName;
-	private JTextField tfAddress;
-    private JLabel lbAddress;
-	private JTextField tfCity;
-    private JLabel lbCity;
-	private JTextField tfState;
-    private JLabel lbState;
-	private JTextField tfZip;
-    private JLabel lbZip;
+	private JTextField tfTitle;
+    private JLabel lbTitle;
+	private JTextField tfDepartment;
+    private JLabel lbDepartment;
+	private JTextField tfCredits;
+    private JLabel lbCredit;
+    private JScrollPane spDescription;
+	private JTextArea taDescription;
+    private JLabel lbDescription;
+    private JScrollPane spOutcomes;
+	private JTextArea taOutcomes;
+    private JLabel lbOutcomes;
+	private JTextField tfContactEmail;
+    private JLabel lbContactEmail;
+	private JTextField tfContactName;
+    private JLabel lbContactName;
     private JButton btnUpdate;
 	
 	public JPUpdateCourse(Connection con) throws SQLException {
@@ -28,32 +36,32 @@ public class JPUpdateCourse extends JPanel {
         cs.fill = GridBagConstraints.HORIZONTAL; 
         
         //Make all the buttons and fields
-        lbSID = new JLabel("SID (School ID):");
+        lbCID = new JLabel("CID (Course ID):");
         cs.gridx = 0;
         cs.gridy = 0;
+        cs.gridwidth = 1;
+        this.add(lbCID, cs);
+        
+        Integer[] aryAllCID = getAllCID(con);
+        jbAllCID = new JComboBox<Integer>(aryAllCID);
+        cs.gridx = 1;
+        cs.gridy = 0;
+        cs.gridwidth = 1;
+        this.add(jbAllCID, cs);
+        
+        lbSID = new JLabel("SID (School ID):");
+        cs.gridx = 0;
+        cs.gridy = 1;
         cs.gridwidth = 1;
         this.add(lbSID, cs);
         
-        Integer[] aryAllSID = getAllSID(con);
-        jbAllSID = new JComboBox<Integer>(aryAllSID);
-        cs.gridx = 1;
-        cs.gridy = 0;
-        cs.gridwidth = 1;
-        this.add(jbAllSID, cs);
-        
-        lbOID = new JLabel("OID (FAFSA):");
-        cs.gridx = 0;
-        cs.gridy = 1;
-        cs.gridwidth = 1;
-        this.add(lbOID, cs);
-        
-        tfOID = new JTextField(30);
+        tfSID = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 1;
         cs.gridwidth = 1;
-        this.add(tfOID, cs);
+        this.add(tfSID, cs);
         
-        lbName = new JLabel("School Name:");
+        lbName = new JLabel("Name:");
         cs.gridx = 0;
         cs.gridy = 2;
         cs.gridwidth = 1;
@@ -65,80 +73,124 @@ public class JPUpdateCourse extends JPanel {
         cs.gridwidth = 1;
         this.add(tfName, cs);
         
-        lbAddress = new JLabel("School Address:");
+        lbTitle = new JLabel("Title:");
         cs.gridx = 0;
         cs.gridy = 3;
         cs.gridwidth = 1;
-        this.add(lbAddress, cs);
+        this.add(lbTitle, cs);
         
-        tfAddress = new JTextField(30);
+        tfTitle = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 3;
         cs.gridwidth = 1;
-        this.add(tfAddress, cs);
+        this.add(tfTitle, cs);
         
-        lbCity = new JLabel("School City:");
+        lbDepartment = new JLabel("Department:");
         cs.gridx = 0;
         cs.gridy = 4;
         cs.gridwidth = 1;
-        this.add(lbCity, cs);
+        this.add(lbDepartment, cs);
         
-        tfCity = new JTextField(30);
+        tfDepartment = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 4;
         cs.gridwidth = 1;
-        this.add(tfCity, cs);
+        this.add(tfDepartment, cs);
         
-        lbState = new JLabel("School State:");
+        lbCredit = new JLabel("Credits:");
         cs.gridx = 0;
         cs.gridy = 5;
         cs.gridwidth = 1;
-        this.add(lbState, cs);
+        this.add(lbCredit, cs);
         
-        tfState = new JTextField(30);
+        tfCredits = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 5;
         cs.gridwidth = 1;
-        this.add(tfState, cs);
+        this.add(tfCredits, cs);
         
-        lbZip = new JLabel("School Zip Code:");
+        lbDescription = new JLabel("Description:");
         cs.gridx = 0;
         cs.gridy = 6;
         cs.gridwidth = 1;
-        this.add(lbZip, cs);
+        this.add(lbDescription, cs);
         
-        tfZip = new JTextField(30);
+        taDescription = new JTextArea(5, 30);
+        taDescription.setSize(new Dimension(5, 30));
+        taDescription.setWrapStyleWord(true);
+        taDescription.setLineWrap(true);
+        spDescription = new JScrollPane(taDescription);
         cs.gridx = 1;
         cs.gridy = 6;
         cs.gridwidth = 1;
-        this.add(tfZip, cs);
+        this.add(spDescription, cs);
         
-        btnUpdate = new JButton("Update School");
+        lbOutcomes = new JLabel("Outcomes:");
+        cs.gridx = 0;
+        cs.gridy = 7;
+        cs.gridwidth = 1;
+        this.add(lbOutcomes, cs);
+        
+        taOutcomes = new JTextArea(5, 30);
+        taOutcomes.setSize(new Dimension(5, 30));
+        taOutcomes.setWrapStyleWord(true);
+        taOutcomes.setLineWrap(true);
+        spOutcomes = new JScrollPane(taOutcomes);
         cs.gridx = 1;
         cs.gridy = 7;
+        cs.gridwidth = 1;
+        this.add(spOutcomes, cs);
+        
+        lbContactEmail = new JLabel("Contact Email:");
+        cs.gridx = 0;
+        cs.gridy = 8;
+        cs.gridwidth = 1;
+        this.add(lbContactEmail, cs);
+        
+        tfContactEmail = new JTextField(30);
+        cs.gridx = 1;
+        cs.gridy = 8;
+        cs.gridwidth = 1;
+        this.add(tfContactEmail, cs);
+        
+        lbContactName = new JLabel("Contact Name:");
+        cs.gridx = 0;
+        cs.gridy = 9;
+        cs.gridwidth = 1;
+        this.add(lbContactName, cs);
+        
+        tfContactName = new JTextField(30);
+        cs.gridx = 1;
+        cs.gridy = 9;
+        cs.gridwidth = 1;
+        this.add(tfContactName, cs);
+        
+        btnUpdate = new JButton("Update Course");
+        cs.gridx = 1;
+        cs.gridy = 10;
         cs.gridwidth = 1;
         this.add(btnUpdate, cs);
         
         //Load the default school into the window
-        loadSchool(con);
+        loadCourse(con);
         
         //Update the database when the update button is hit
         btnUpdate.addActionListener(new ActionListener() {
         		public void actionPerformed(ActionEvent e) {
         			try {
-					updateSchool(con);
-					JOptionPane.showMessageDialog(JPUpdateCourse.this, "You have successfully updated a school.", "You Did It!", JOptionPane.INFORMATION_MESSAGE);
+					updateCourse(con);
+					JOptionPane.showMessageDialog(JPUpdateCourse.this, "You have successfully updated a course.", "You Did It!", JOptionPane.INFORMATION_MESSAGE);
 				} catch (SQLException|NumberFormatException e1) {
 					JOptionPane.showMessageDialog(JPUpdateCourse.this, "Error 404", "Error", JOptionPane.ERROR_MESSAGE);
 				}
             }
         });
         
-        //Load every time a new SID is selected from the drop down
-        jbAllSID.addActionListener(new ActionListener() {
+        //Load every time a new CID is selected from the drop down
+        jbAllCID.addActionListener(new ActionListener() {
 	    		public void actionPerformed(ActionEvent e) {
 	    			try {
-	    				loadSchool(con);
+	    				loadCourse(con);
 	    			} catch (SQLException|NumberFormatException e1) {
 	    				JOptionPane.showMessageDialog(JPUpdateCourse.this, "Load Failed", "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -146,17 +198,17 @@ public class JPUpdateCourse extends JPanel {
         });
 	}
 	
-	//Return every SID in a sorted array
-	public Integer[] getAllSID(Connection con) throws SQLException {
-		ResultSet rsAllSID = Queries.getEverySID(con);
+	//Return every CID in a sorted array
+	public Integer[] getAllCID(Connection con) throws SQLException {
+		ResultSet rsAllCID = Queries.getEveryCID(con);
 		
-		int rows = getRowCount(rsAllSID);
+		int rows = getRowCount(rsAllCID);
 		
 		Integer[] result = new Integer[rows];
 		
 		for (int i = 0; i < rows; i++) {
-			rsAllSID.next();
-			result[i] = rsAllSID.getInt(1);
+			rsAllCID.next();
+			result[i] = rsAllCID.getInt(1);
 		}
 		
 		Arrays.sort(result);
@@ -176,14 +228,14 @@ public class JPUpdateCourse extends JPanel {
 		return count;
 	}
 	
-	//Return the SID
-    public int getSID() {
-    		return (int) jbAllSID.getSelectedItem();
+	//Return the CID 
+    public int getCID() throws NumberFormatException {
+    		return (int) jbAllCID.getSelectedItem();
     }
 	
-	//Return the OID
-    public String getOID() {
-    		return tfOID.getText().trim();
+	//Return the SID
+    public int getSID() throws NumberFormatException {
+    		return Integer.parseInt(tfSID.getText().trim());
     }
     
 	//Return the course name
@@ -191,51 +243,73 @@ public class JPUpdateCourse extends JPanel {
     		return tfName.getText().trim();
     }
     
-	//Return the school address
-    public String getAddress() {
-    		return tfAddress.getText().trim();
+	//Return the course title
+    public String getTitle() {
+    		return tfTitle.getText().trim();
     }
     
 	//Return the school city
-    public String getCity() {
-        return tfCity.getText().trim();
+    public String getDepartment() {
+        return tfDepartment.getText().trim();
     }
     
-	//Return the school state
-    public String getState() {
-        return tfState.getText().trim();
+	//Return the credits
+    public int getCredits() throws NumberFormatException {
+        return Integer.parseInt(tfCredits.getText().trim());
     }
     
-	//Return the school zipcode
-    public String getZipCode() {
-        return tfZip.getText().trim();
+	//Return the description
+    public String getDescription() {
+        return taDescription.getText().trim();
+    }
+    
+    //Return the outcomes
+    public String getOutcomes() {
+    		return taOutcomes.getText().trim();
+    }
+    
+    //Return the contact email address
+    public String getContactEmail() {
+		return tfContactEmail.getText().trim();
+    }
+    
+    //Return the contact name
+    public String getContactName() {
+		return tfContactName.getText().trim();
     }
     
     //Create a pop up for the result of the search
-    public void updateSchool(Connection con) throws SQLException, NumberFormatException {
+    public void updateCourse(Connection con) throws SQLException, NumberFormatException {
+    		int intCID = getCID();
     		int intSID = getSID();
-    		String strOID = getOID().trim();
     		String strName = getName().trim();
-    		String strAddress = getAddress().trim();
-    		String strCity =  getCity().trim();
-    		String strState =  getState().trim();
-    		String strZip =  getZipCode().trim();
+    		String strTitle = getTitle().trim();
+    		String strDepartment =  getDepartment().trim();
+    		int intCredits =  getCredits();
+    		String strDescription =  getDescription().trim();
+    		String strOutcomes = getOutcomes().trim();
+    		String strContactEmail = getContactEmail().trim();
+    		String strContactName = getContactName().trim();
     		
-    		Queries.updateSchool(con, intSID, strOID, strName, strAddress, strCity, strState, strZip);
+    		Queries.updateCourse(con, intCID, intSID, strName, strTitle, strDepartment, intCredits, strDescription, strOutcomes, strContactEmail, strContactName);
     }
     
-    //Load the data for a school
-    public void loadSchool(Connection con) throws SQLException, NumberFormatException {
-    		int intSID = getSID();
+    //Load the data for a course
+    public void loadCourse(Connection con) throws SQLException, NumberFormatException {
+    		int intCID = getCID();
     	
-    		ResultSet rs = Queries.getInfoSID(con, intSID);
+    		ResultSet rs = Queries.getInfoCID(con, intCID);
+    		
     		if (rs.next()) {
-    			tfOID.setText(rs.getString(2));
+    			tfSID.setText(rs.getString(2));
     			tfName.setText(rs.getString(3));
-    			tfAddress.setText(rs.getString(4));
-    			tfCity.setText(rs.getString(5));
-    			tfState.setText(rs.getString(6));
-    			tfZip.setText(rs.getString(7));
+    			tfTitle.setText(rs.getString(4));
+    			tfDepartment.setText(rs.getString(5));
+    			tfCredits.setText(rs.getString(6));
+    			taDescription.setText(rs.getString(7));
+    			taOutcomes.setText(rs.getString(8));
+    			tfContactEmail.setText(rs.getString(9));
+    			tfContactName.setText(rs.getString(10));
     		} else {
     			JOptionPane.showMessageDialog(JPUpdateCourse.this, "School Not Found", "Error", JOptionPane.ERROR_MESSAGE);
     		}

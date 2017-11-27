@@ -15,9 +15,11 @@ public class JPAddCourse extends JPanel {
     private JLabel lbDepartment;
 	private JTextField tfCredits;
     private JLabel lbCredits;
-	private JTextField tfDescription;
+    private JScrollPane spDescription;
+    private JTextArea taDescription;
     private JLabel lbDescription;
-	private JTextField tfOutcomes;
+    private JScrollPane spOutcomes;
+    private JTextArea taOutcomes;
     private JLabel lbOutcomes;
 	private JTextField tfContactEmail;
     private JLabel lbContactEmail;
@@ -98,11 +100,15 @@ public class JPAddCourse extends JPanel {
         cs.gridwidth = 1;
         this.add(lbDescription, cs);
         
-        tfDescription = new JTextField(20);
+        taDescription = new JTextArea(5, 30);
+        taDescription.setSize(new Dimension(5, 30));
+        taDescription.setWrapStyleWord(true);
+        taDescription.setLineWrap(true);
+        spDescription = new JScrollPane(taDescription);
         cs.gridx = 1;
         cs.gridy = 5;
         cs.gridwidth = 1;
-        this.add(tfDescription, cs);
+        this.add(spDescription, cs);
         
         lbOutcomes = new JLabel("Course Outcomes:");
         cs.gridx = 0;
@@ -110,11 +116,15 @@ public class JPAddCourse extends JPanel {
         cs.gridwidth = 1;
         this.add(lbOutcomes, cs);
         
-        tfOutcomes = new JTextField(20);
+        taOutcomes = new JTextArea(5, 30);
+        taOutcomes.setSize(new Dimension(5, 30));
+        taOutcomes.setWrapStyleWord(true);
+        taOutcomes.setLineWrap(true);
+        spOutcomes = new JScrollPane(taOutcomes);
         cs.gridx = 1;
         cs.gridy = 6;
         cs.gridwidth = 1;
-        this.add(tfOutcomes, cs);
+        this.add(spOutcomes, cs);
         
         lbContactEmail = new JLabel("Contact Email:");
         cs.gridx = 0;
@@ -185,12 +195,12 @@ public class JPAddCourse extends JPanel {
     
 	//Return the course description
     public String getDescription() {
-        return tfDescription.getText().trim();
+        return taDescription.getText().trim();
     }
     
 	//Return the course outcomes
     public String getCourseOutcomes() {
-        return tfOutcomes.getText().trim();
+        return taOutcomes.getText().trim();
     }
     
 	//Return the course description

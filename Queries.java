@@ -44,6 +44,22 @@ public class Queries {
 		cst.setString(7, zipCode);
 		cst.executeQuery();
 	}
+
+	//Update a course in the database
+	public static void updateCourse(Connection con, int CID, int SID, String name, String title, String department, int credits, String description, String outcomes, String contactEmail, String contactName) throws SQLException {
+    		CallableStatement cst = con.prepareCall("{call updateCourse(?,?,?,?,?,?,?,?,?,?)}");
+    		cst.setInt(1, CID);
+		cst.setInt(2, SID);
+		cst.setString(3, name);
+		cst.setString(4, title);
+		cst.setString(5, department);
+		cst.setInt(6, credits);
+		cst.setString(7, description);
+		cst.setString(8, outcomes);
+		cst.setString(9, contactEmail);
+		cst.setString(10, contactName);
+		cst.executeQuery();
+	}
 	
 	//Get the information for a school when given the SID
 	public static ResultSet getInfoSID(Connection con, int SID) throws SQLException {
@@ -52,10 +68,23 @@ public class Queries {
 		return cst.executeQuery();
 	}
 	
+	//Get the information for a course when given the CID
+	public static ResultSet getInfoCID(Connection con, int CID) throws SQLException {
+    		CallableStatement cst = con.prepareCall("{call getInfoCID(?)}");
+		cst.setInt(1, CID);
+		return cst.executeQuery();
+	}
+	
 	//Get the SID of every school
 	public static ResultSet getEverySID(Connection con) throws SQLException {
 		java.sql.Statement stmt = con.createStatement();
 		return stmt.executeQuery("SELECT * FROM EverySID");
+	}
+	
+	//Get the CID of every course
+	public static ResultSet getEveryCID(Connection con) throws SQLException {
+		java.sql.Statement stmt = con.createStatement();
+		return stmt.executeQuery("SELECT * FROM EveryCID");
 	}
 	
 	//get Course number for every course with a matching information not using the SID
