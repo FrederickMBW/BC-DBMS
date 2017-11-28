@@ -199,8 +199,8 @@ public class BasicSwing extends JFrame{
     JLabel studentAgeCompare = new JLabel("Age");
     JLabel studentDOB = new JLabel("Birth date = ");
     JLabel studentAdvisorLike = new JLabel("Advisor = ");
-    JLabel studentGradDateCompare = new JLabel("Graduated before (year):");
-    JLabel gradDateEquals = new JLabel("Graduation year = ");
+    JLabel studentGradDateCompare = new JLabel("Graduation date (YYYY-MM-DD) ");
+    JLabel gradDateEquals = new JLabel("Graduation date (YYYY-MM-DD) = ");
     JLabel studentStreetLabel = new JLabel("Street address = ");
     JLabel studentZipLabel = new JLabel("Zip = ");
     JLabel studentPhoneLabel = new JLabel("Phone number = ");
@@ -214,7 +214,7 @@ public class BasicSwing extends JFrame{
     JLabel statusLabel = new JLabel("Item status = ");
     JLabel priceCompareLabel = new JLabel("Price");
     JLabel priceEqualLabel = new JLabel("Price = ");
-    JLabel dopLabel = new JLabel("Date of purchase = ");
+    JLabel dopLabel = new JLabel("Date of purchase (YYYY-MM-DD) = ");
     JLabel itemIDlabel = new JLabel("Item ID = ");
 
     JLabel bookIDlabel = new JLabel("Book ID = ");
@@ -224,8 +224,10 @@ public class BasicSwing extends JFrame{
     JLabel isbnLabel = new JLabel("ISBN = ");
     JLabel conditionLabel = new JLabel("Condition = ");
 
-    JLabel outDateLabel = new JLabel("Date sent out = ");
-    JLabel inDateLabel = new JLabel("Date returned = ");
+    JLabel outDateLabel = new JLabel("Date sent out (YYYY-MM-DD) = ");
+    JLabel inDateLabel = new JLabel("Date returned (YYYY-MM-DD) = ");
+    JLabel hourLabel1 = new JLabel("Time (HH:MM) = ");
+    JLabel hourLabel2 = new JLabel("Time (HH:MM) = ");
 
     JComboBox studentOrderOptions = new JComboBox(studentColumnsName);
     JComboBox devicesOrderOptions = new JComboBox(devicesColumns);
@@ -994,8 +996,12 @@ public class BasicSwing extends JFrame{
                 itemIDPanel.add(field6s3);
                 outDatePanel.add(outDateLabel);
                 outDatePanel.add(field5s8);
+                outDatePanel.add(hourLabel1);
+                outDatePanel.add(field8s8);
                 inDatePanel.add(inDateLabel);
                 inDatePanel.add(field9s8);
+                inDatePanel.add(hourLabel2);
+                inDatePanel.add(field10s8);
 
                 searchCheckout.add(studentSidPanel);
                 searchCheckout.add(fnamePanel);
@@ -1005,7 +1011,7 @@ public class BasicSwing extends JFrame{
                 searchCheckout.add(outDatePanel);
                 searchCheckout.add(inDatePanel);
                 clearFields.doClick();
-                genericItemQueryTrigger.doClick();
+                checkoutQueryTrigger.doClick();
                 jt.setPreferredScrollableViewportSize(new Dimension(800,100));
                 searchCheckout.add(orderByLabel);
                 searchCheckout.add(checkoutOrderOptions);
@@ -1013,7 +1019,7 @@ public class BasicSwing extends JFrame{
                 searchCheckout.add(addCheckoutFrame);
                 searchCheckout.add(returnToMenu);
                 searchCheckout.add(js);
-                setSize(700,300);
+                setSize(850,350);
 
                 add(searchCheckout);
                 searchCheckout.setVisible(true);
@@ -1026,8 +1032,8 @@ public class BasicSwing extends JFrame{
                 clearTable();
                 String filters[] = {field1s8.getText(),field2s8.getText(),
                         field3s8.getText(),field17s8.getText(),field6s3.getText(),
-                        field5s8.getText(),field9s8.getText(),//dont forget next line next time
-                        checkoutSQLcolumns[checkoutOrderOptions.getSelectedIndex()]};
+                        field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
+                        field10s8.getText(),checkoutSQLcolumns[checkoutOrderOptions.getSelectedIndex()]};
                 SQLStuff.get_checkout_data(model, filters);
             }
         });
@@ -1035,25 +1041,31 @@ public class BasicSwing extends JFrame{
         getCheckoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String fields[] = {field6s3.getText(),field2s8.getText(),
-                        (String)statusChoices.getSelectedItem(),
-                        field16s3.getText(),field1s8.getText()};
-                String newFields[] = SQLStuff.get_single_generic_item_data(fields);
-                field6s3.setText(newFields[0]);
+                String fields[] = {field1s8.getText(),field2s8.getText(),
+                        field3s8.getText(),field17s8.getText(),field6s3.getText(),
+                        field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
+                        field10s8.getText()};
+                String newFields[] = SQLStuff.get_single_checkout_data(fields);
+                field1s8.setText(newFields[0]);
                 field2s8.setText(newFields[1]);
-                statusChoices.setSelectedItem(newFields[2]);
-                field16s3.setText(newFields[3]);
-                field1s8.setText(newFields[4]);
+                field3s8.setText(newFields[3]);
+                field17s8.setText(newFields[4]);
+                field6s3.setText(newFields[5]);
+                field5s8.setText(newFields[6]);
+                field8s8.setText(newFields[7]);
+                field9s8.setText(newFields[8]);
+                field10s8.setText(newFields[9]);
             }
         });
 
         editCheckoutQuery.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String fields[] = {field6s3.getText(),field2s8.getText(),
-                        (String)statusChoices.getSelectedItem(),
-                        field16s3.getText(),field1s8.getText()};
-                SQLStuff.update_generic_item(fields);
+                String fields[] = {field1s8.getText(),field2s8.getText(),
+                        field3s8.getText(),field17s8.getText(),field6s3.getText(),
+                        field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
+                        field10s8.getText()};
+                SQLStuff.update_checkout(fields);
             }
         });
 
@@ -1062,25 +1074,25 @@ public class BasicSwing extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 searchCheckout.setVisible(false);
                 setSize(700,150);
-                priceCompareLabel.setVisible(false);
-                comparators1.setVisible(false);
 
                 pricePanel.add(priceEqualLabel);
                 pricePanel.add(field16s3);
                 priceEqualLabel.setVisible(true);
 
-                addGenericItems.add(itemIDPanel);
-                addGenericItems.add(itemDescriptionPanel);
-                addGenericItems.add(statusPanel);
-                addGenericItems.add(pricePanel);
-                addGenericItems.add(dopPanel);
+                searchCheckout.add(studentSidPanel);
+                searchCheckout.add(fnamePanel);
+                searchCheckout.add(lnamePanel);
+                searchCheckout.add(itemDescriptionPanel);
+                searchCheckout.add(itemIDPanel);
+                searchCheckout.add(outDatePanel);
+                searchCheckout.add(inDatePanel);
                 clearFields.doClick();
 
-                addGenericItems.add(addGenericItemButton);
-                addGenericItems.add(getGenericItemButton);
-                addGenericItems.add(editGenericItemQuery);
-                addGenericItems.add(returnToGenericItems);
-                add(addGenericItems);
+                addCheckout.add(addCheckoutButton);
+                addCheckout.add(getCheckoutButton);
+                addCheckout.add(editCheckoutQuery);
+                addCheckout.add(returnToCheckout);
+                add(addCheckout);
                 addCheckout.setVisible(true);
             }
         });
@@ -1095,10 +1107,11 @@ public class BasicSwing extends JFrame{
         addCheckoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String fields[] = {field6s3.getText(),field2s8.getText(),
-                        (String)statusChoices.getSelectedItem(),
-                        field16s3.getText(),field1s8.getText()};
-                SQLStuff.add_generic_item(fields);
+                String fields[] = {field1s8.getText(),field2s8.getText(),
+                        field3s8.getText(),field17s8.getText(),field6s3.getText(),
+                        field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
+                        field10s8.getText()};
+                SQLStuff.add_checkout(fields);
             }
         });
 
