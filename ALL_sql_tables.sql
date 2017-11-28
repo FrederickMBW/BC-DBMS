@@ -20,6 +20,7 @@ drop table if exists maintenance;
 drop table if exists student;
 drop table if exists devices;
 drop table if exists books;
+DROP TABLE IF EXISTS EQUIVALENT_COURSES;
 drop table if exists BC_Member;
 #drop table if exists course_equivalency;
 drop table if exists generic_item;
@@ -236,11 +237,7 @@ DROP TABLE IF EXISTS SCHOOL;
 CREATE TABLE SCHOOL (
     SID INTEGER AUTO_INCREMENT NOT NULL,
     OID VARCHAR(100),
-<<<<<<< HEAD
     SNAME VARCHAR(100) NOT NULL,
-=======
-    SNAME VARCHAR(100),
->>>>>>> 33fb28fdda7ba0e2684870cd48e2aced9281e461
     ADDRESS VARCHAR(100),
     CITY VARCHAR(100),
     STATE VARCHAR(100),
@@ -274,26 +271,11 @@ WHERE
 	SID = inSID;
 END //
 DELIMITER ;
-    
-#Get set of every SID like given school name
-DROP PROCEDURE IF EXISTS getInfoSID;
-DELIMITER //
-CREATE PROCEDURE getInfoSID
-(IN inSID INTEGER)
-BEGIN
-SELECT 
-    *
-FROM
-    SCHOOL
-WHERE
-	SID = inSID;
-END //
-DELIMITER ;
 
 #Get set of every SID with the given information
-DROP PROCEDURE IF EXISTS getSID;
+DROP PROCEDURE IF EXISTS searchSchool;
 DELIMITER //
-CREATE PROCEDURE getSID
+CREATE PROCEDURE searchSchool
 (IN inOID VARCHAR(100), IN inSNAME VARCHAR(100), IN inADDRESS VARCHAR(100), IN inCITY VARCHAR(100), IN inSTATE VARCHAR(100), IN inZIPCODE VARCHAR(100))
 BEGIN
 SELECT 
@@ -310,12 +292,20 @@ WHERE
 END //
 DELIMITER ;
 
-DROP VIEW IF EXISTS EVERYSID;
-CREATE VIEW EVERYSID
-AS SELECT
-	SID
+#Return the school with the matching SID
+DROP PROCEDURE IF EXISTS getSchool;
+DELIMITER //
+CREATE PROCEDURE getSchool
+(IN inSID INTEGER)
+BEGIN
+SELECT 
+    S.SID, S.OID, S.SNAME, S.ADDRESS, S.CITY, S.STATE, S.ZIPCODE
 FROM
-	SCHOOL;
+    SCHOOL AS S
+WHERE
+    S.SID = inSID;
+END //
+DELIMITER ;
 
 CREATE TABLE COURSE (
     CID INTEGER AUTO_INCREMENT,
@@ -346,9 +336,9 @@ END //
 DELIMITER ;
 
 #Update a course in the data base
-DROP PROCEDURE IF EXISTS UpdateCOURSE;
+DROP PROCEDURE IF EXISTS UpdateCourse;
 DELIMITER //
-CREATE PROCEDURE UpdateCOURSE
+CREATE PROCEDURE UpdateCourse
 (IN inCID INTEGER, IN inSID INTEGER, IN inCNAME VARCHAR(30), IN inTITLE VARCHAR(140), IN inDEPARTMENT VARCHAR(30), IN inCREDITS TINYINT, IN inDESCRIPTION VARCHAR(1024), IN inCOURSE_OUTCOMES VARCHAR(1024), IN inCONTACT_EMAIL VARCHAR(100), IN inCONTACT_NAME VARCHAR(100))
 BEGIN
 UPDATE 
@@ -360,14 +350,14 @@ WHERE
 END //
 DELIMITER ;
 
-#Get set of every CID at a school
-DROP PROCEDURE IF EXISTS getInfoCID;
+#Return a course with the matching CID
+DROP PROCEDURE IF EXISTS getCourse;
 DELIMITER //
-CREATE PROCEDURE getInfoCID
+CREATE PROCEDURE getCourse
 (IN inCID INTEGER)
 BEGIN
 SELECT 
-    *
+	CID, SID, CNAME, TITLE, DEPARTMENT, CREDITS, DESCRIPTION, COURSE_OUTCOMES, CONTACT_EMAIL, CONTACT_NAME
 FROM
     COURSE
 WHERE
@@ -375,30 +365,10 @@ WHERE
 END //
 DELIMITER ;
 
-#Get a set of every Bellevue College CID
-DROP VIEW IF EXISTS EVERYBCCID;
-CREATE VIEW EVERYBCCID AS
-    SELECT 
-        CID
-    FROM
-        COURSE
-    WHERE
-        SID = 1;
-        
-#Get a set of every non-Bellevue College CID
-DROP VIEW IF EXISTS EVERYNONBCCID;
-CREATE VIEW EVERYNONBCCID AS
-    SELECT 
-        CID
-    FROM
-        COURSE
-    WHERE
-        SID <> 1;
-
-#Get set of every CID with given information
-DROP PROCEDURE IF EXISTS getCID;
+#Get set of every Course with given information
+DROP PROCEDURE IF EXISTS searchCourse;
 DELIMITER //
-CREATE PROCEDURE getCID
+CREATE PROCEDURE searchCourse
 (IN inCNAME VARCHAR(30), inTITLE VARCHAR(140), inDEPARTMENT VARCHAR(30), inSNAME VARCHAR(30))
 BEGIN
 SELECT 
@@ -415,10 +385,10 @@ WHERE
 END //
 DELIMITER ;
 
-#Get set of every CID like given information and equal SID
-DROP PROCEDURE IF EXISTS GetCIDwithSID;
+#Get every CID that is offered at a school with the matching SID and othe information
+DROP PROCEDURE IF EXISTS searchCourseWithSID;
 DELIMITER //
-CREATE PROCEDURE GetCIDwithSID
+CREATE PROCEDURE searchCourseWithSID
 (IN inCNAME VARCHAR(30), inTITLE VARCHAR(140), inDEPARTMENT VARCHAR(30), inSID INTEGER)
 BEGIN
 SELECT 
@@ -479,10 +449,10 @@ CREATE TABLE EQUIVALENT_COURSES (
 DROP PROCEDURE IF EXISTS AddEquivalentCourse;
 DELIMITER //
 CREATE PROCEDURE AddEquivalentCourse
-(IN CID1 INTEGER, CID2 INTEGER, inIS_EQUIVALENT BOOL, inEC_COMMENT VARCHAR(140))
+(IN CID1 INTEGER, CID2 INTEGER, inIS_EQUIVALENT BOOL, inEC_COMMENT VARCHAR(140), IN inSID VARCHAR(16))
 BEGIN
-INSERT INTO EQUIVALENT_COURSES (COURSE1, COURSE2, IS_EQUIVALENT, EC_COMMENT, APPROVED)
-VALUES (CID1, CID2, inIS_EQUIVALENT, inEC_COMMENT, NOW());
+INSERT INTO EQUIVALENT_COURSES (COURSE1, COURSE2, IS_EQUIVALENT, EC_COMMENT, APPROVED, REVIEWED_BY)
+VALUES (CID1, CID2, inIS_EQUIVALENT, inEC_COMMENT, NOW(), inSID);
 END //
 DELIMITER ;
 
@@ -490,10 +460,10 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS UpdateEQUIVALENT;
 DELIMITER //
 CREATE PROCEDURE UpdateEQUIVALENT
-(IN inCID1 INTEGER, inCID2 INTEGER, inIS_EQUIVALENT BOOL, inEC_COMMENT VARCHAR(140))
+(IN inCID1 INTEGER, inCID2 INTEGER, inIS_EQUIVALENT BOOL, inEC_COMMENT VARCHAR(140), IN inSID VARCHAR(16))
 BEGIN
 UPDATE EQUIVALENT_COURSES
-SET COURSE1 = inCID1, COURSE2 = inCID2, IS_EQUIVALENT = inIS_EQUIVALENT, EC_COMMENT = inEC_COMMENT, APPROVED = CURDATE()
+SET COURSE1 = inCID1, COURSE2 = inCID2, IS_EQUIVALENT = inIS_EQUIVALENT, EC_COMMENT = inEC_COMMENT, APPROVED = CURDATE(), REVIEWED_BY = inSID
 WHERE 	inCID1 = COURSE1 
 		AND inCID2 = COURSE2;
 END //
@@ -527,54 +497,6 @@ BEGIN
 END$$
 DELIMITER ;
 
-#Set of equivalent and non-equivalent courses when given BC course name, other course name, and other school SID
-DROP PROCEDURE IF EXISTS isEquivilentSID;
-DELIMITER //
-CREATE PROCEDURE isEquivilentSID
-(IN BC_COURSE_NAME VARCHAR(30), OTHER_COURSE_NAME VARCHAR(30), OTHER_COURSE_SCHOOL_SID INTEGER)
-BEGIN
-SELECT 
-	 E.IS_EQUIVALENT AS IsEquivalent, C1.CNAME AS CourseName, C2.CNAME AS CourseName, S2.SNAME AS SchoolName, APPROVED AS DateApproved, EC_COMMENT AS EC_Comment
-FROM
-	EQUIVALENT_COURSES AS E,
-    COURSE AS C1,
-    COURSE AS C2,
-    SCHOOL AS S2
-WHERE
-	C1.CID = E.COURSE1 
-    AND C1.SID = 1
-    AND C1.CNAME LIKE BC_COURSE_NAME
-    AND C2.CID = E.COURSE2
-    AND C2.CNAME LIKE OTHER_COURSE_NAME
-    AND C2.SID = S2.SID
-    AND S2.SID = OTHER_COURSE_SCHOOL_SID;
-END //
-DELIMITER ;
-
-#Set of equivalent and non-equivalent courses when given BC course name, other course name, and other school name
-DROP PROCEDURE IF EXISTS isEquivilent;
-DELIMITER //
-CREATE PROCEDURE isEquivilent
-(IN BC_COURSE_NAME VARCHAR(30), OTHER_COURSE_NAME VARCHAR(30), OTHER_COURSE_SCHOOL_NAME VARCHAR(30))
-BEGIN
-SELECT 
-	E.IS_EQUIVALENT AS IsEquivalent, C1.CNAME AS BC_CourseName, C2.CNAME AS CourseName, S.SNAME AS SchoolName, S.STATE AS State, S.CITY AS City, S.ADDRESS AS Address, APPROVED AS DateApproved, EC_COMMENT AS EC_Comment
-FROM
-	EQUIVALENT_COURSES AS E,
-    COURSE AS C1,
-    COURSE AS C2,
-    SCHOOL AS S
-WHERE
-	C1.CID = E.COURSE1 
-    AND C1.SID = 1
-    AND C1.CNAME LIKE BC_COURSE_NAME
-    AND C2.CID = E.COURSE2
-    AND C2.CNAME LIKE OTHER_COURSE_NAME
-    AND C2.SID = S.SID
-    AND S.SNAME LIKE OTHER_COURSE_SCHOOL_NAME;
-END //
-DELIMITER ;
-
 #Gets the equivalent info for two courses
 DROP PROCEDURE IF EXISTS getEquivalentInfo;
 DELIMITER //
@@ -582,7 +504,7 @@ CREATE PROCEDURE getEquivalentInfo
 (IN inCID1 INTEGER, inCID2 INTEGER)
 BEGIN
 SELECT 
-	IS_EQUIVALENT, EC_COMMENT, APPROVED
+	IS_EQUIVALENT, EC_COMMENT, APPROVED, REVIEWED_BY
 FROM
 	EQUIVALENT_COURSES
 WHERE
@@ -606,11 +528,11 @@ VALUES
 (6234, "CSE142", "Computer Programming I", "Computer Science & Engineering", "4", "Basic programming-in-the-small abilities and concepts including procedural programming (methods, parameters, return, values), basic control structures (sequence, if/else, for loop, while loop), file processing, arrays, and an introduction to defining objects. Intended for students without prior programming experience.", "an ability to identify, formulate, and solve engineering problems. an ability to use the techniques, skills, and modern engineering tools. an ability to apply knowledge of mathematics, science, and engineering."),
 (6234, "CSE143", "Computer Programming II", "Computer Science & Engineering", "4", "Continuation of 142. Concepts of data abstraction and encapsulation including stacks, queues, linked lists, binary trees, recursion, instruction to complexity and use of predefined collection classes.", "an ability to identify, formulate, and solve engineering problems. an ability to use the techniques, skills, and modern engineering tools. an ability to apply knowledge of mathematics, science, and engineering.");
 
-INSERT INTO EQUIVALENT_COURSES (COURSE1, COURSE2, IS_EQUIVALENT, EC_COMMENT, APPROVED)
+INSERT INTO EQUIVALENT_COURSES (COURSE1, COURSE2, IS_EQUIVALENT, EC_COMMENT, APPROVED, REVIEWED_BY)
 VALUES 
-(1, 6, TRUE, "What?", CURDATE()),
-(1, 7, TRUE, "Sure?", CURDATE()),
-(2, 6, FALSE, "Okay?", CURDATE());
+(1, 6, TRUE, "What?", CURDATE(), 111111111),
+(1, 7, FALSE, "Sure?", CURDATE(), 111111111),
+(2, 6, FALSE, "Okay?", CURDATE(), 111111111);
 
 
 
@@ -622,7 +544,3 @@ VALUES
 
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 33fb28fdda7ba0e2684870cd48e2aced9281e461
