@@ -138,7 +138,7 @@ public class JPQueryCourse extends JPanel {
     		int intWidth;
 
     		if (getSchoolSID().equals("")) {
-    			rsResults = Queries.getCID(con, strCourseName, strCourseTitle, strCourseDepartment, strSchoolName);
+    			rsResults = Queries.searchCourse(con, strCourseName, strCourseTitle, strCourseDepartment, strSchoolName);
     			jtbResult = Queries.ResultSetToJTable(rsResults);
     			jtbResult.getColumnModel().getColumn(0).setPreferredWidth(50);
     			jtbResult.getColumnModel().getColumn(1).setPreferredWidth(75);
@@ -153,7 +153,7 @@ public class JPQueryCourse extends JPanel {
     			jtbResult.getColumnModel().getColumn(10).setPreferredWidth(50);
     			intWidth = 975;
     		} else {
-    			rsResults = Queries.getCIDwithSID(con, strCourseName, strCourseTitle, strCourseDepartment, Integer.parseInt(strSID));      
+    			rsResults = Queries.searchCourseWithSID(con, strCourseName, strCourseTitle, strCourseDepartment, Integer.parseInt(strSID));      
     			jtbResult = Queries.ResultSetToJTable(rsResults);
     			jtbResult.getColumnModel().getColumn(0).setPreferredWidth(50);
     			jtbResult.getColumnModel().getColumn(1).setPreferredWidth(75);

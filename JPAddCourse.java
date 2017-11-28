@@ -29,7 +29,7 @@ public class JPAddCourse extends JPanel {
     
 	public JPAddCourse(Connection con) {
 		super(new GridBagLayout());
-
+		
         GridBagConstraints cs = new GridBagConstraints();
  
         cs.fill = GridBagConstraints.HORIZONTAL; 

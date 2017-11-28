@@ -228,7 +228,7 @@ public class JPUpdateSchool extends JPanel {
     public void loadSchool(Connection con) throws SQLException, NumberFormatException {
     		int intSID = getSID();
     	
-    		ResultSet rs = Queries.getInfoSID(con, intSID);
+    		ResultSet rs = Queries.getSchool(con, intSID);
     		if (rs.next()) {
     			tfOID.setText(rs.getString(2));
     			tfName.setText(rs.getString(3));

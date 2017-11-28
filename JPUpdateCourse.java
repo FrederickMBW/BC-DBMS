@@ -298,7 +298,7 @@ public class JPUpdateCourse extends JPanel {
     public void loadCourse(Connection con) throws SQLException, NumberFormatException {
     		int intCID = getCID();
     	
-    		ResultSet rs = Queries.getInfoCID(con, intCID);
+    		ResultSet rs = Queries.getCourse(con, intCID);
     		
     		if (rs.next()) {
     			tfSID.setText(rs.getString(2));

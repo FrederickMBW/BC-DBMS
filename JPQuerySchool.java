@@ -153,7 +153,7 @@ public class JPQuerySchool extends JPanel {
     		String strState = "%" + getState().trim().replace(' ', '%') + "%";
     		String strZipCode =  "%" + getZipCode().trim().replace(' ', '%') + "%";
     		
-    		ResultSet rsResults = Queries.getSID(con, strOID, strName, strAddress, strCity, strState, strZipCode);
+    		ResultSet rsResults = Queries.searchSchool(con, strOID, strName, strAddress, strCity, strState, strZipCode);
     		JTable jtbResult = Queries.ResultSetToJTable(rsResults);
 		jtbResult.getColumnModel().getColumn(0).setPreferredWidth(50);
 		jtbResult.getColumnModel().getColumn(1).setPreferredWidth(100);
