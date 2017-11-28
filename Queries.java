@@ -2,6 +2,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.JTable;
@@ -9,8 +10,8 @@ import javax.swing.table.DefaultTableModel;
 
 public class Queries {
 	//get the SID of every school with matching information
-	public static ResultSet getSID(Connection con, String OID, String name, String address, String city, String state, String zipCode) throws SQLException {
-		CallableStatement cst = con.prepareCall("{call getSID(?,?,?,?,?,?)}");
+	public static ResultSet searchSchool(Connection con, String OID, String name, String address, String city, String state, String zipCode) throws SQLException {
+		CallableStatement cst = con.prepareCall("{call searchSchool(?,?,?,?,?,?)}");
 		cst.setString(1, OID);
 		cst.setString(2, name);
 		cst.setString(3, address);
@@ -19,7 +20,14 @@ public class Queries {
 		cst.setString(6, zipCode);
 		return cst.executeQuery();
 	}
-	
+
+	//get the SID of the school with a matching SID
+	public static ResultSet getSchool(Connection con, int SID) throws SQLException {
+		CallableStatement cst = con.prepareCall("{call getSchool(?)}");
+		cst.setInt(1, SID);
+		return cst.executeQuery();
+	}
+
 	//Add a school to the database
 	public static void addSchool(Connection con, String otherID, String schoolName, String address, String city, String state, String zipCode) throws SQLException {
     		CallableStatement cst = con.prepareCall("{call AddSchool(?,?,?,?,?,?)}");
@@ -44,6 +52,12 @@ public class Queries {
 		cst.setString(7, zipCode);
 		cst.executeQuery();
 	}
+	
+	//Get the SID of every school
+	public static ResultSet getEverySID(Connection con) throws SQLException {
+		java.sql.Statement stmt = con.createStatement();
+		return stmt.executeQuery("SELECT SID FROM SCHOOL");
+	}
 
 	//Update a course in the database
 	public static void updateCourse(Connection con, int CID, int SID, String name, String title, String department, int credits, String description, String outcomes, String contactEmail, String contactName) throws SQLException {
@@ -61,35 +75,16 @@ public class Queries {
 		cst.executeQuery();
 	}
 	
-	//Get the information for a school when given the SID
-	public static ResultSet getInfoSID(Connection con, int SID) throws SQLException {
-    		CallableStatement cst = con.prepareCall("{call getInfoSID(?)}");
-		cst.setInt(1, SID);
-		return cst.executeQuery();
-	}
-	
 	//Get the information for a course when given the CID
-	public static ResultSet getInfoCID(Connection con, int CID) throws SQLException {
-    		CallableStatement cst = con.prepareCall("{call getInfoCID(?)}");
+	public static ResultSet getCourse(Connection con, int CID) throws SQLException {
+    		CallableStatement cst = con.prepareCall("{call getCourse(?)}");
 		cst.setInt(1, CID);
 		return cst.executeQuery();
 	}
 	
-	//Get the SID of every school
-	public static ResultSet getEverySID(Connection con) throws SQLException {
-		java.sql.Statement stmt = con.createStatement();
-		return stmt.executeQuery("SELECT * FROM EverySID");
-	}
-	
-	//Get the CID of every course
-	public static ResultSet getEveryCID(Connection con) throws SQLException {
-		java.sql.Statement stmt = con.createStatement();
-		return stmt.executeQuery("SELECT * FROM EveryCID");
-	}
-	
 	//get Course number for every course with a matching information not using the SID
-	public static ResultSet getCID(Connection con, String courseName, String courseTitle, String courseDepartment, String schoolName) throws SQLException {
-		CallableStatement cst = con.prepareCall("{call getCID(?,?,?,?)}");
+	public static ResultSet searchCourse(Connection con, String courseName, String courseTitle, String courseDepartment, String schoolName) throws SQLException {
+		CallableStatement cst = con.prepareCall("{call searchCourse(?,?,?,?)}");
 		cst.setString(1, courseName);
 		cst.setString(2, courseTitle);
 		cst.setString(3, courseDepartment);
@@ -98,8 +93,8 @@ public class Queries {
 	}
 	
 	//get Course number for every course with a matching information using the SID
-	public static ResultSet getCIDwithSID (Connection con, String courseName, String title, String department, int SID) throws SQLException {
-		CallableStatement cst = con.prepareCall("{call GetCIDwithSID(?,?,?,?)}");
+	public static ResultSet searchCourseWithSID (Connection con, String courseName, String title, String department, int SID) throws SQLException {
+		CallableStatement cst = con.prepareCall("{call searchCourseWithSID(?,?,?,?)}");
 		cst.setString(1, courseName);
 		cst.setString(2,  title);
 		cst.setString(3,  department);
@@ -107,23 +102,29 @@ public class Queries {
 		return cst.executeQuery();
 	}
 	
+	//Get the CID of every course
+	public static ResultSet getEveryCID(Connection con) throws SQLException {
+		java.sql.Statement stmt = con.createStatement();
+		return stmt.executeQuery("SELECT CID FROM COURSE");
+	}
+	
+	//Get every course CID of every course no offered at Bellevue College
+	public static ResultSet getAllNonBCCID(Connection con) throws SQLException {
+		java.sql.Statement stmt = con.createStatement();
+		return stmt.executeQuery("SELECT CID FROM COURSE WHERE SID <> 1");
+	}
+	
+	//Get every course CID offered at Bellevue College
+	public static ResultSet getAllBCCID(Connection con) throws SQLException  {
+		java.sql.Statement stmt = con.createStatement();
+		return stmt.executeQuery("SELECT CID FROM COURSE WHERE SID = 1");
+	}
+	
 	//Get the name of the course and the school's name
 	public static ResultSet getCourseNameAndSchool(Connection con, int CID) throws SQLException {
 		CallableStatement cst = con.prepareCall("{call getCourseNameAndSchool(?)}");
 		cst.setInt(1, CID);
 		return cst.executeQuery();
-	}
-	
-	//Get every course CID in the database
-	public static ResultSet getAllNonBCCID(Connection con) throws SQLException {
-		java.sql.Statement stmt = con.createStatement();
-		return stmt.executeQuery("SELECT * FROM EVERYNONBCCID");
-	}
-	
-	//Get every course CID from BC in the database
-	public static ResultSet getAllBCCID(Connection con) throws SQLException  {
-		java.sql.Statement stmt = con.createStatement();
-		return stmt.executeQuery("SELECT * FROM EveryBCCID");
 	}
 
 	//Add a course to the database
@@ -141,15 +142,6 @@ public class Queries {
 		cst.executeQuery();
 	}
 	
-	//Get set of equivalent and non-equivalent courses when given BC course name, other course name, and other school name
-	public static ResultSet isEquivilentSID (Connection con, String bellvueCollegeCourseName, String otherCourseName, int otherCourseSID) throws SQLException {
-		CallableStatement cst = con.prepareCall("{call isEquivilentSID(?,?,?)}");
-		cst.setString(1, bellvueCollegeCourseName);
-		cst.setString(2, otherCourseName);
-		cst.setInt(3, otherCourseSID);
-		return cst.executeQuery();
-	}
-	
 	//Get Equivalent course information
 	public static ResultSet getEquivalentInfo (Connection con, int CID1, int CID2) throws SQLException {
 		CallableStatement cst = con.prepareCall("{call getEquivalentInfo(?,?)}");
@@ -159,31 +151,24 @@ public class Queries {
 	}
 	
 	//Get set of equivalent and non-equivalent courses when given BC course name, other course name, and other school name
-	public static ResultSet isEquivilent (Connection con, String bellvueCollegeCourseName, String otherCourseName, String otherCourseSchoolName) throws SQLException {
-		CallableStatement cst = con.prepareCall("{call isEquivilent(?,?,?)}");
-		cst.setString(1, bellvueCollegeCourseName);
-		cst.setString(2, otherCourseName);
-		cst.setString(3, otherCourseSchoolName);
-		return cst.executeQuery();
-	}
-	
-	//Get set of equivalent and non-equivalent courses when given BC course name, other course name, and other school name
-	public static ResultSet updateCourseEquivalent(Connection con, int CID1, int CID2, boolean isEquiv, String comment) throws SQLException {
-		CallableStatement cst = con.prepareCall("{call UpdateEQUIVALENT(?,?,?,?)}");
+	public static ResultSet updateCourseEquivalent(Connection con, int CID1, int CID2, boolean isEquiv, String comment, String SID) throws SQLException {
+		CallableStatement cst = con.prepareCall("{call UpdateEQUIVALENT(?,?,?,?,?)}");
 		cst.setInt(1, CID1);
 		cst.setInt(2, CID2);
 		cst.setBoolean(3, isEquiv);
 		cst.setString(4, comment);
+		cst.setString(5, SID);
 		return cst.executeQuery();
 	}
 	
 	//Add an equivalent course
-	public static void addEquivalentCourse(Connection con, int bellevueCollegeCID, int otherCID, boolean isEquivalent, String comment) throws SQLException {
-		CallableStatement cst = con.prepareCall("{call AddEquivalentCourse(?,?,?,?)}");
+	public static void addEquivalentCourse(Connection con, int bellevueCollegeCID, int otherCID, boolean isEquivalent, String comment, String SID) throws SQLException {
+		CallableStatement cst = con.prepareCall("{call AddEquivalentCourse(?,?,?,?,?)}");
 		cst.setInt(1, bellevueCollegeCID);
 		cst.setInt(2, otherCID);
 		cst.setBoolean(3, isEquivalent);
 		cst.setString(4, comment);
+		cst.setString(5, SID);
 		cst.executeQuery();
 	}
 	
@@ -216,5 +201,71 @@ public class Queries {
 	    }
 
 	    return new DefaultTableModel(data, columnNames);
+	}
+	
+	//Return Every SID in a sorted array
+	//Adds 0 to the front of the array
+	public static Integer[] getAllSID(Connection con) throws SQLException {
+		//Get a result set with every SID
+		ResultSet rsAllSID = Queries.getEverySID(con);
+		
+		//Count the number of rows in the result set
+		int rows = Queries.getRowCount(rsAllSID);
+		
+		//Create an array to store all the SIDs and zero
+		Integer[] result = new Integer[rows + 1];
+		
+		//Set index zero to zero
+		result[0] = 0;
+		
+		//Add all the SIDs to the array
+		for (int i = 1; i <= rows; i++) {
+			rsAllSID.next();
+			result[i] = rsAllSID.getInt(1);
+		}
+		
+		//Sort the array
+		Arrays.sort(result);
+		
+		return result;
+	}
+	
+	//Return every CID in a sorted array
+	//Adds 0 to the front of the array
+	public static Integer[] getAllCID(Connection con) throws SQLException {
+		//Query to get every CID
+		ResultSet rsAllCID = Queries.getEveryCID(con);
+		
+		//Count the number of CIDs
+		int rows = Queries.getRowCount(rsAllCID);
+		
+		//Create array to store all CIDs and 0
+		Integer[] result = new Integer[rows + 1];
+		
+		//Set the first index to zero
+		result[0] = 0;
+		
+		//Fill every other index with the CID numbers
+		for (int i = 1; i <= rows; i++) {
+			rsAllCID.next();
+			result[i] = rsAllCID.getInt(1);
+		}
+		
+		//Sort the array
+		Arrays.sort(result);
+		
+		return result;
+	}
+	
+	//Return the number of rows in a result set
+	public static int getRowCount(ResultSet rs) throws SQLException {
+		int count = 0;
+		while (rs.next()) {
+			count++;
+		}
+		
+		rs.beforeFirst();
+		
+		return count;
 	}
 }
