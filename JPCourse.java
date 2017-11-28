@@ -25,7 +25,7 @@ public class JPCourse extends JPanel {
         cs.gridwidth = 1;
         this.add(lbCID, cs);
         
-        Integer[] aryAllCID = Queries.getAllCID(con);
+        Integer[] aryAllCID = Queries.getArrayAllCID(con);
         cbAllCID = new JComboBox<Integer>(aryAllCID);
         cs.gridx = 1;
         cs.gridy = 0;
@@ -38,7 +38,7 @@ public class JPCourse extends JPanel {
         cs.gridwidth = 1;
         this.add(lbSID, cs);
         
-        Integer[] aryAllSID = Queries.getAllSID(con);
+        Integer[] aryAllSID = Queries.getArrayAllSID(con);
         cbSID = new JComboBox<Integer>(aryAllSID);
         cs.gridx = 1;
         cs.gridy = 1;
@@ -193,7 +193,7 @@ public class JPCourse extends JPanel {
 						updateCourse(con);
 						JOptionPane.showMessageDialog(JPCourse.this, "You have successfully updated a course.", "You Did It!", JOptionPane.INFORMATION_MESSAGE);
 					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(JPCourse.this, "MySQL Error", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(JPCourse.this, "MySQL Error \n" + e1.getStackTrace(), "Error", JOptionPane.ERROR_MESSAGE);
 					} catch (NumberFormatException e2) {
 						JOptionPane.showMessageDialog(JPCourse.this, "Number Formatting Error", "Error", JOptionPane.ERROR_MESSAGE);
 					} catch (IllegalArgumentException e3) {
@@ -208,7 +208,7 @@ public class JPCourse extends JPanel {
         //Clear all data fields when button is clicked
         btnClear.addActionListener(new ActionListener() {
 	    		public void actionPerformed(ActionEvent e) {
-	    			cbAllCID.setSelectedItem(0);
+	    			cbAllCID.setSelectedIndex(0);;
 	        }
         });
         
@@ -410,7 +410,7 @@ public class JPCourse extends JPanel {
     	    }
 
     		//Clear all the fields
-    		cbAllCID.setSelectedItem(0);
+    		cbAllCID.setSelectedIndex(0);
     		clearFields();
     }
     
@@ -487,7 +487,7 @@ public class JPCourse extends JPanel {
     
     //Clear all fields
     public void clearFields() {
-   		cbSID.setSelectedItem(0);
+   		cbSID.setSelectedIndex(0);
 		tfName.setText("");
 		tfTitle.setText("");
 		tfDepartment.setText("");

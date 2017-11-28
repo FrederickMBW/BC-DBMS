@@ -22,7 +22,7 @@ public class JPSchool extends JPanel {
         cs.gridwidth = 1;
         this.add(lbSID, cs);
         
-        Integer[] aryAllSID = Queries.getAllSID(con);
+        Integer[] aryAllSID = Queries.getArrayAllSID(con);
         cbAllSID = new JComboBox<Integer>(aryAllSID);
         cs.gridx = 1;
         cs.gridy = 0;
@@ -152,7 +152,7 @@ public class JPSchool extends JPanel {
 	    			if (getSID() == 0) {
 		    			try {
 						addSchool(con);
-						cbAllSID.setSelectedItem(0);
+						cbAllSID.setSelectedIndex(0);;
 						//updatejbAllSID(con); TODO
 						JOptionPane.showMessageDialog(JPSchool.this, "You have successfully added a school.", "High Five!", JOptionPane.INFORMATION_MESSAGE);
 					} catch (SQLException e1) {
@@ -170,7 +170,7 @@ public class JPSchool extends JPanel {
         //Set the SID to 0 and all the fields to blank
         btnClear.addActionListener(new ActionListener() {
 	    		public void actionPerformed(ActionEvent e) {
-	    			cbAllSID.setSelectedItem(0);
+	    			cbAllSID.setSelectedIndex(0);;
 	        }
         });
         
