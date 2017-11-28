@@ -6,17 +6,16 @@
 //package SM;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 
 import javax.swing.*;
 
 public class PopUp extends JFrame{
-
     public PopUp(JScrollPane sPane, String TITLE, int width, int height){
         this.setTitle(TITLE);
-        
         setSize(width + 100, height + 50);
-        setLocation(0, 0);
 
+        setLocation(0, 0);
         Dimension dim = new Dimension(width, height);
         
         JPanel p = new JPanel();
