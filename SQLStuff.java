@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class SQLStuff
 {
+    static String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
     static String username = "root";
     static String password = "cs331";
     static String[] studentTableColumnsName = {"SID", "First Name","Last Name", "Street", "City","State", "Zip", "Phone Number", "Email","Standing", "CGPA", "Demographic", "Date of Birth","advisor","enrolled","graduation Date"};
@@ -27,7 +28,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             String query = "select * from students_view where sid = '" + f[0] + "'";
             String query1 = "update student set " + studentSQLcolumnNames[9] + " = ? where sid = ?";
@@ -169,7 +169,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
 
             String query1 = "insert into BC_Member (SID, nameFirst, nameLast, address_street, address_city, address_state, address_zip, phone,email) VALUES (?,?,?,?,?,?,?,?,?)";
@@ -242,7 +241,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from students_view s";
@@ -292,24 +290,15 @@ public class SQLStuff
             query += " order by namelast";
             System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
-            int count = 0;
-            while ( resultSet.next() )
-            {
-                count++;
-            }
-            resultSet.beforeFirst();
             while ( resultSet.next())
             {
                 String res = resultSet.getString("sid") + ' ' + resultSet.getString("namelast") + ' ' + resultSet.getString("namefirst");
                 j.addItem(res);
             }
-            for (int i = 0; i < count; i++) {
-                //t.addRow(data[i]);
-            }
         }
         catch (SQLException ex)
         {
-            System.out.println("combobox update failed");//*************************************************************************************************************************************
+            System.out.println("student combobox update failed");//*************************************************************************************************************************************
             System.out.println(ex);
         }
         finally
@@ -334,7 +323,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from students_view s";
@@ -417,7 +405,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from students_view s where s.sid <> ''";
@@ -448,7 +435,7 @@ public class SQLStuff
             if (!f[12].equals(""))
                 query = query + " and s.dob = '" + f[12];
             if (f[12].length() == 4)
-                query += "-01-01'";
+                query += "-00-00'";
             if (!f[13].equals(""))
                 query = query + " and s.advisor like '%" + f[13] + "%'";
             if (f[14].equals("yes"))
@@ -458,7 +445,7 @@ public class SQLStuff
             if (!f[15].equals(""))
                 query = query + " and s.grad_date < '" + f[15];
             if (f[15].length() == 4)
-                query += "-01-01 00:00:00'";
+                query += "-00-00'";
             System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
@@ -517,7 +504,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             String query = "select * from devices_view where item_id = '" + f[0] + "'";
             String query1 = "update devices set " + devicesSQLcolumns[1] + " = ? where item_id = ?";
@@ -603,7 +589,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             String query1 = "insert into generic_item (item_description, status, price, date_of_purchase) VALUES (?,?,?,?)";
             String query2 = "insert into devices (item_id,device_id, model_number) values (?,?,?)";
@@ -640,7 +625,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("addition failed");//*************************************************************************************************************************************
+            System.out.println("device addition failed");//*************************************************************************************************************************************
             System.out.println(ex);
             if (genericItemAdded) {
                 try {
@@ -674,6 +659,60 @@ public class SQLStuff
         }
     }
 
+    public static void updateDeviceGetter(JComboBox<String> j, String[] f){
+        j.removeAllItems();
+        Connection conn = null;
+        try
+        {
+            DriverManager.registerDriver(new Driver());
+            conn = DriverManager.getConnection(url, username, password);
+            Statement stmt = conn.createStatement();
+            String query = "select * from devices_view s where s.device_id <> ''";
+            if (!f[0].equals(""))
+                query = query + " and s.item_id = '" + f[0] + "'";
+            if (!f[1].equals(""))
+                query = query + " and s.device_id = '" + f[1] + "'";
+            if (!f[2].equals(""))
+                query = query + " and s.item_description like '%" + f[2] + "%'";
+            if (!f[3].equals("All"))
+                query = query + " and s.status = '" + f[3] + "'";
+            if (!f[4].equals(""))
+                query = query + " and s.model_number like '%" + f[4] + "%'";
+            if (!f[5].equals(""))
+                query = query + " and s.price = '" + f[5] + "'";
+            if (!f[6].equals("")) {
+                if (f[6].length() == 4)
+                    query = query + " and s.date_of_purchase = '" + f[6] + "-01-01'";
+                else
+                    query = query + " and s.date_of_purchase = '" + f[6] + "'";
+            }
+            System.out.println(query);
+            ResultSet resultSet = stmt.executeQuery(query);
+            while ( resultSet.next())
+            {
+                String res = resultSet.getString("device_id") + ' ' + resultSet.getString("item_description");
+                j.addItem(res);
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("device combobox update failed");//*************************************************************************************************************************************
+            System.out.println(ex);
+        }
+        finally
+        {
+            if (conn != null)
+            {
+                try
+                {
+                    conn.close();
+                }
+                catch (SQLException e)
+                { /* ignored */}
+            }
+        }
+    }
+
     public static void get_device_data(DefaultTableModel t, String f[]){
         t.setColumnCount(0);
         for (int i = 0; i < 7; i++)
@@ -682,7 +721,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from devices_view s";
@@ -752,7 +790,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from devices_view s where s.device_id <> ''";
@@ -815,7 +852,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             String query = "select * from books_view where item_id = '" + f[0] + "'";
             String query1 = "update books set " + booksSQLcolumns[1] + " = ? where item_id = ?";
@@ -909,7 +945,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("device updates failed");//*************************************************************************************************************************************
+            System.out.println("book updates failed");//*************************************************************************************************************************************
             System.out.println(ex);
             //System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
         }   //if update nonexistent value(or change device id)
@@ -933,7 +969,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             String query1 = "insert into generic_item ( status,item_description, price, date_of_purchase) VALUES (?,?,?,?)";
             String query2 = "insert into books (item_id,book_id, title,edition,book_type,isbn, book_condition) values (?,?,?,?,?,?,?)";
@@ -976,7 +1011,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("addition failed");//*************************************************************************************************************************************
+            System.out.println("book addition failed");//*************************************************************************************************************************************
             System.out.println(ex);
             if (genericItemAdded) {
                 try {
@@ -1010,6 +1045,68 @@ public class SQLStuff
         }
     }
 
+    public static void updateBookGetter(JComboBox<String> j, String[] f){
+        j.removeAllItems();
+        Connection conn = null;
+        try
+        {
+            DriverManager.registerDriver(new Driver());
+            conn = DriverManager.getConnection(url, username, password);
+            Statement stmt = conn.createStatement();
+            String query = "select * from books_view s where s.book_id <> ''";
+            if (!f[0].equals(""))
+                query = query + " and s.item_id = '" + f[0] + "'";
+            if (!f[1].equals(""))
+                query = query + " and s.book_id = '" + f[1] + "'";
+            if (!f[2].equals(""))
+                query = query + " and s.title like '%" + f[2] + "%'";
+            if (!f[3].equals("All"))
+                query = query + " and s.status = '" + f[3] + "'";
+            if (!f[4].equals(""))
+                query = query + " and s.item_description like '%" + f[4] + "%'";
+            if (!f[5].equals(""))
+                query = query + " and s.edition = '" + f[5] + "'";
+            if (!f[6].equals(""))
+                query = query + " and s.book_type = '" + f[6] + "'";
+            if (!f[7].equals(""))
+                query = query + " and s.isbn = '" + f[7] + "'";
+            if (!f[8].equals(""))
+                query = query + " and s.book_condition = '" + f[8] + "'";
+            if (!f[9].equals(""))
+                query = query + " and s.price = '" + f[9] + "'";
+            if (!f[10].equals("")) {
+                if (f[10].length() == 4)
+                    query = query + " and s.date_of_purchase = '" + f[10] + "-01-01'";
+                else
+                    query = query + " and s.date_of_purchase = '" + f[10] + "'";
+            }
+            System.out.println(query);
+            ResultSet resultSet = stmt.executeQuery(query);
+            while ( resultSet.next())
+            {
+                String res = resultSet.getString("book_id") + ' ' + resultSet.getString("title");
+                j.addItem(res);
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("book combobox update failed");//*************************************************************************************************************************************
+            System.out.println(ex);
+        }
+        finally
+        {
+            if (conn != null)
+            {
+                try
+                {
+                    conn.close();
+                }
+                catch (SQLException e)
+                { /* ignored */}
+            }
+        }
+    }
+
     public static void get_book_data(DefaultTableModel t, String f[]){
         t.setColumnCount(0);
         for (int i = 0; i < 11; i++)
@@ -1018,7 +1115,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from books_view s";
@@ -1096,7 +1192,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from books_view s where s.book_id <> ''";
@@ -1144,7 +1239,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("single device selection failed");//*************************************************************************************************************************************
+            System.out.println("single book selection failed");//*************************************************************************************************************************************
             System.out.println(ex);
         }
         finally
@@ -1167,7 +1262,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             String query = "select * from generic_items_view where item_id = '" + f[0] + "'";
             String query1 = "update generic_item set " + genericItemSQLcolumns[1] + " = ? where item_id = ?";
@@ -1236,7 +1330,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             String query = "insert into generic_item (item_id, item_description,status, price, date_of_purchase) VALUES (0,?,?,?,?)";
 
@@ -1277,6 +1370,56 @@ public class SQLStuff
         }
     }
 
+    public static void updateGenericItemGetter(JComboBox<String> j, String[] f){
+        j.removeAllItems();
+        Connection conn = null;
+        try
+        {
+            DriverManager.registerDriver(new Driver());
+            conn = DriverManager.getConnection(url, username, password);
+            Statement stmt = conn.createStatement();
+            String query = "select * from generic_items_view s where true";
+            if (!f[0].equals(""))
+                query = query + " and s.item_id = '" + f[0] + "'";
+            if (!f[1].equals(""))
+                query = query + " and s.item_description like '%" + f[1] + "%'";
+            if (!f[2].equals("All"))
+                query = query + " and s.status = '" + f[2] + "'";
+            if (!f[3].equals(""))
+                query = query + " and s.price = '" + f[9] + "'";
+            if (!f[4].equals("")) {
+                if (f[4].length() == 4)
+                    query = query + " and s.date_of_purchase = '" + f[4] + "-01-01'";
+                else
+                    query = query + " and s.date_of_purchase = '" + f[4] + "'";
+            }
+            System.out.println(query);
+            ResultSet resultSet = stmt.executeQuery(query);
+            while ( resultSet.next())
+            {
+                String res = resultSet.getString("item_id") + "   " + resultSet.getString("item_description");
+                j.addItem(res);
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("generic item combobox update failed");//*************************************************************************************************************************************
+            System.out.println(ex);
+        }
+        finally
+        {
+            if (conn != null)
+            {
+                try
+                {
+                    conn.close();
+                }
+                catch (SQLException e)
+                { /* ignored */}
+            }
+        }
+    }
+
     public static void get_generic_item_data(DefaultTableModel t, String f[]){
         t.setColumnCount(0);
         for (int i = 0; i < 5; i++)
@@ -1285,7 +1428,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from generic_items_view s where true";
@@ -1350,7 +1492,6 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from generic_items_view s where true";
@@ -1386,7 +1527,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("single device selection failed");//*************************************************************************************************************************************
+            System.out.println("single generic item selection failed");//*************************************************************************************************************************************
             System.out.println(ex);
         }
         finally
@@ -1409,53 +1550,48 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
-            String query = "select * from generic_items_view where item_id = '" + f[0] + "'";
-            String query1 = "update generic_item set " + genericItemSQLcolumns[1] + " = ? where item_id = ?";
+            String query = "select * from checkout where sid = '" + f[0] + "' and item_id = '" + f[4] + "' and date_checked_out = '" + f[5] + ' ' + f[6] + "'";
+            String query1 = "update checking_out_item set " + checkoutSQLcolumns[1] + " = ? where sid = '" + f[0] + "' and item_id = '" + f[4] + "' and date_checked_out = '" + f[5] + ' ' + f[6] + "'";
             System.out.println(query);
             Statement stmt1 = conn.createStatement();
             ResultSet rs = stmt1.executeQuery(query);
             rs.next();
             PreparedStatement stmt;
-            if (!rs.getString(genericItemSQLcolumns[1]).equals(f[1])) {//item description
+            if (!rs.getString(genericItemSQLcolumns[1]).equals(f[1])) {//fname
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[1]);
-                stmt.setString(2, f[0]);
                 System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
-            if (!rs.getString(genericItemSQLcolumns[2]).equals(f[2])) {//status
-                query1 = "update generic_item set " + genericItemSQLcolumns[2] + " = ? where item_id = ?";
+            if (!rs.getString(genericItemSQLcolumns[2]).equals(f[2])) {//lname
+                query1 = "update checking_out_item set " + checkoutSQLcolumns[2] + " = ? where sid = '" + f[0] + "' and item_id = '" + f[4] + "' and date_checked_out = '" + f[5] + ' ' + f[6] + "'";
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[2]);
-                stmt.setString(2, f[0]);
                 System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
-            if (!rs.getString(genericItemSQLcolumns[3]).equals(f[3]) && !f[3].equals("")) {//price
-                query1 = "update generic_item set " + genericItemSQLcolumns[3] + " = ? where item_id = ?";
+            if (!rs.getString(genericItemSQLcolumns[3]).equals(f[3])) {//item description
+                query1 = "update checking_out_item set " + checkoutSQLcolumns[3] + " = ? where sid = '" + f[0] + "' and item_id = '" + f[4] + "' and date_checked_out = '" + f[5] + ' ' + f[6] + "'";
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[3]);
-                stmt.setString(2, f[0]);
                 System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
-            if (!rs.getString(genericItemSQLcolumns[4]).equals(f[4]) && !f[4].equals("")) {//dop
-                query1 = "update generic_item set " + genericItemSQLcolumns[4] + " = ? where item_id = ?";
+            if (!rs.getString(genericItemSQLcolumns[4]).equals(f[4]) && !f[7].equals("")) {//date returned
+                query1 = "update checking_out_item set " + checkoutSQLcolumns[6] + " = ? where sid = '" + f[0] + "' and item_id = '" + f[4] + "' and date_checked_out = '" + f[5] + ' ' + f[6] + "'";
                 stmt = conn.prepareStatement(query1);
-                if (f[4].length() == 4)
-                    stmt.setString(1, f[4] + "-01-01");
+                if (!f[8].equals(""))
+                    stmt.setString(1,f[7]+' '+f[8]);
                 else
-                    stmt.setString(1,f[4]);
-                stmt.setString(2, f[0]);
+                    stmt.setString(1, f[4] + " 00:00:00");
                 System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
         }
         catch (SQLException ex)
         {
-            System.out.println("generic item updates failed");//*************************************************************************************************************************************
+            System.out.println("checkout updates failed");//*************************************************************************************************************************************
             System.out.println(ex);
             //System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
         }   //if update nonexistent value(or change device id)
@@ -1478,31 +1614,94 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
-            String query = "insert into generic_item (item_id, item_description,status, price, date_of_purchase) VALUES (0,?,?,?,?)";
-
+            String query = "insert into checking_out_item (sid, date_checked_out, date_returned,item_id) VALUES (?,?,?,?)";
             System.out.println(query);
-
             PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1,f[1]);
-            if (f[2].equals("All"))
-                f[2] = "Available";
-            stmt.setString(2,f[2]);
-            if (f[3].equals(""))
-                f[3] = "0";
-            stmt.setString(3,f[3]);
-            if (f[4].length() == 4)
-                stmt.setString(4,f[4] + "-01-01");
-            else if (f[4].length() == 0)
-                stmt.setString(4,"0000-01-01");
-            else
-                stmt.setString(4,f[4]);
+            stmt.setString(1,f[0]);
+            if (f[6].length() == 5)
+                f[6] = f[6] + ":00";
+            stmt.setString(2,f[5] + ' ' + f[6]);
+            if (f[7].equals(""))
+                stmt.setString(3,null);
+            else {
+                if (!f[8].equals("")) {
+                    if (f[8].length() == 5)
+                        f[8] = f[8] + ":00";
+                } else
+                    f[8] = "00:00:00";
+                stmt.setString(3,f[7] + ' ' + f[8]);
+            }
+            stmt.setString(4,f[3]);
             stmt.executeUpdate();
         }
         catch (SQLException ex)
         {
-            System.out.println("generic item addition failed");//*************************************************************************************************************************************
+            System.out.println("checkout addition failed");//*************************************************************************************************************************************
+            System.out.println(ex);
+        }
+        finally
+        {
+            if (conn != null)
+            {
+                try
+                {
+                    conn.close();
+                }
+                catch (SQLException e)
+                { /* ignored */}
+            }
+        }
+    }
+
+    public static void updateCheckoutGetter(JComboBox<String> j, String[] f){
+        j.removeAllItems();
+        Connection conn = null;
+        try
+        {
+            DriverManager.registerDriver(new Driver());
+            conn = DriverManager.getConnection(url, username, password);
+            Statement stmt = conn.createStatement();
+            String query = "select * from checkout s where true";
+            if (!f[0].equals(""))
+                query = query + "and s.sid = '" + f[0] + "'";
+            if (!f[1].equals(""))
+                query = query + " and s.namefirst like '%" + f[1] + "%'";
+            if (!f[2].equals(""))
+                query = query + " and s.namelast like '%" + f[2] + "%'";
+            if (!f[3].equals(""))
+                query = query + " and s.item_description like '%" + f[3] + "%'";
+            if (!f[4].equals(""))
+                query = query + " and s.item_id = '" + f[4] + "'";
+            if (!f[5].equals("")) {
+                if (!f[6].equals(""))
+                    query = query + " and s.date_checked_out like '" + f[5] + " " + f[6] + "%'";
+                else
+                    query = query + " and s.date_checked_out like '%" + f[5] + "%'";
+            } else {
+                if (!f[6].equals(""))
+                    query = query + " and s.date_checked_out like '%" + f[6] + "%'";
+            }
+            if (!f[7].equals("")) {
+                if (!f[8].equals(""))
+                    query = query + " and s.date_checked_out like '" + f[7] + " " + f[8] + "%'";
+                else
+                    query = query + " and s.date_checked_out like '%" + f[7] + "%'";
+            } else {
+                if (!f[8].equals(""))
+                    query = query + " and s.date_checked_out like '%" + f[8] + "%'";
+            }
+            System.out.println(query);
+            ResultSet resultSet = stmt.executeQuery(query);
+            while ( resultSet.next())
+            {
+                String res = resultSet.getString("sid") + ' ' + resultSet.getString("item_description") + ' ' + resultSet.getString("date_checked_out").substring(0,11);
+                j.addItem(res);
+            }
+        }
+        catch (SQLException ex)
+        {
+            System.out.println("checkout combobox update failed");//*************************************************************************************************************************************
             System.out.println(ex);
         }
         finally
@@ -1527,25 +1726,39 @@ public class SQLStuff
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
             String query = "select * from checkout s where true";//damn good time to learn about jcombobox listener. this would be a pain otherwise
+            System.out.println("this one, right?");
             if (!f[0].equals(""))
-                query = query + "and s.item_id = '" + f[0] + "'";
+                query = query + " and s.sid = '" + f[0] + "'";
             if (!f[1].equals(""))
-                query = query + " and s.item_description like '%" + f[1] + "%'";
-            if (!f[2].equals("All"))
-                query = query + " and s.status = '" + f[2] + "'";
+                query = query + " and s.namefirst like '%" + f[1] + "%'";
+            if (!f[2].equals(""))
+                query = query + " and s.namelast like '%" + f[2] + "%'";
+            if (!f[3].equals(""))
+                query = query + " and s.item_description like '%" + f[3] + "%'";
             if (!f[4].equals(""))
-                query = query + " and s.price " + f[3] + " " + f[4];
+                query = query + " and s.item_id = '" + f[4] + "'";
             if (!f[5].equals("")) {
-                if (f[5].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[5] + "-01-01'";
+                if (!f[6].equals(""))
+                    query = query + " and s.date_checked_out like '" + f[5] + " " + f[6] + "%'";
                 else
-                    query = query + " and s.date_of_purchase = '" + f[5] + "'";
+                    query = query + " and s.date_checked_out like '%" + f[5] + "%'";
+            } else {
+                if (!f[6].equals(""))
+                    query = query + " and s.date_checked_out like '%" + f[6] + "%'";
             }
-            query = query + " order by " + f[6];
+            if (!f[7].equals("")) {
+                if (!f[8].equals(""))
+                    query = query + " and s.date_checked_out like '" + f[7] + " " + f[8] + "%'";
+                else
+                    query = query + " and s.date_checked_out like '%" + f[7] + "%'";
+            } else {
+                if (!f[8].equals(""))
+                    query = query + " and s.date_checked_out like '%" + f[8] + "%'";
+            }
+            query = query + " order by " + f[9];
             System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
@@ -1553,13 +1766,13 @@ public class SQLStuff
             {
                 count++;
             }
-            String data[][] = new String[count][5];
+            String data[][] = new String[count][7];
             int j = 0;
             resultSet.beforeFirst();
             while ( resultSet.next())
             {
-                for (int i = 0; i < 5; i++) {
-                    data[j][i] = resultSet.getString(genericItemSQLcolumns[i]);
+                for (int i = 0; i < 7; i++) {
+                    data[j][i] = resultSet.getString(checkoutSQLcolumns[i]);
                 }
                 j++;
             }
@@ -1569,7 +1782,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("generic item selection failed");//*************************************************************************************************************************************
+            System.out.println("checkout selection failed");//*************************************************************************************************************************************
             System.out.println(ex);
         }
         finally
@@ -1587,28 +1800,41 @@ public class SQLStuff
     }
 
     public static String[] get_single_checkout_data(String f[]){
-        String[] returnFields = {f[0],f[1],f[2],f[3],f[4]};
+        String[] returnFields = {f[0],f[1],f[2],f[3],f[4],f[5],f[6],f[7],f[8]};
         Connection conn = null;
         try
         {
             DriverManager.registerDriver(new Driver());
-            String url = "jdbc:mysql://localhost:3306/sean_server?serverTimezone=UTC";
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
-            String query = "select * from generic_items_view s where true";
+            String query = "select * from checkout s where true";
             if (!f[0].equals(""))
-                query = query + " and s.item_id = '" + f[0] + "'";
+                query = query + "and s.sid = '" + f[0] + "'";
             if (!f[1].equals(""))
-                query = query + " and s.item_description like '%" + f[1] + "%'";
-            if (!f[2].equals("All"))
-                query = query + " and s.status = '" + f[2] + "'";
+                query = query + " and s.namefirst like '%" + f[1] + "%'";
+            if (!f[2].equals(""))
+                query = query + " and s.namelast like '%" + f[2] + "%'";
             if (!f[3].equals(""))
-                query = query + " and s.price = '" + f[9] + "'";
-            if (!f[4].equals("")) {
-                if (f[4].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[4] + "-01-01'";
+                query = query + " and s.item_description like '%" + f[3] + "%'";
+            if (!f[4].equals(""))
+                query = query + " and s.item_id = '" + f[4] + "'";
+            if (!f[5].equals("")) {
+                if (!f[6].equals(""))
+                    query = query + " and s.date_checked_out like '" + f[5] + " " + f[6] + "%'";
                 else
-                    query = query + " and s.date_of_purchase = '" + f[4] + "'";
+                    query = query + " and s.date_checked_out like '%" + f[5] + "%'";
+            } else {
+                if (!f[6].equals(""))
+                    query = query + " and s.date_checked_out like '%" + f[6] + "%'";
+            }
+            if (!f[7].equals("")) {
+                if (!f[8].equals(""))
+                    query = query + " and s.date_checked_out like '" + f[7] + " " + f[8] + "%'";
+                else
+                    query = query + " and s.date_checked_out like '%" + f[7] + "%'";
+            } else {
+                if (!f[8].equals(""))
+                    query = query + " and s.date_checked_out like '%" + f[8] + "%'";
             }
             System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
@@ -1620,15 +1846,15 @@ public class SQLStuff
             if (count == 1) {
                 resultSet.beforeFirst();
                 resultSet.next();
-                for (int i = 0; i < 5; i++){
-                    returnFields[i] = resultSet.getString(genericItemSQLcolumns[i]);
+                for (int i = 0; i < 9; i++){
+                    returnFields[i] = resultSet.getString(checkoutSQLcolumns[i]);
                 }
             } else
                 System.out.println("HERE IS WHERE ERROR MESSAGE BOX GOES. " + count + "matches found");//*************************************************************************************************************************************
         }
         catch (SQLException ex)
         {
-            System.out.println("single device selection failed");//*************************************************************************************************************************************
+            System.out.println("single checkout selection failed");//*************************************************************************************************************************************
             System.out.println(ex);
         }
         finally
@@ -1645,5 +1871,4 @@ public class SQLStuff
         }
         return returnFields;
     }
-//RANOM EXTRA CODE TO TEST PULL REQUESTS.
 }
