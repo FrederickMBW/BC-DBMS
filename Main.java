@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
 import java.sql.*;
 
 public class Main {
@@ -23,7 +24,10 @@ public class Main {
     		loginDlg.addWindowListener(new WindowAdapter() {
     			public void windowClosed(WindowEvent e) {
     				if(loginDlg.isSucceeded()){
-    					openMainMenu(loginDlg.getConnection());
+					//new Test(loginDlg.getConnection());
+					//new Test2(loginDlg.getConnection());
+					new Test3(loginDlg.getConnection());
+    					//openMainMenu(loginDlg.getConnection());
     				} else {
     					JDialog failed = new JDialog();
     					failed.setVisible(true);
