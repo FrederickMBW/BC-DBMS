@@ -58,6 +58,14 @@ public class Queries {
 		java.sql.Statement stmt = con.createStatement();
 		return stmt.executeQuery("SELECT SID FROM SCHOOL");
 	}
+	
+	//Get the Max SID of every school
+	public static int getMaxSID(Connection con) throws SQLException {
+		java.sql.Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT MAX(SID) FROM SCHOOL");
+		rs.next();
+		return rs.getInt(1);
+	}
 
 	//Update a course in the database
 	public static void updateCourse(Connection con, int CID, int SID, String name, String title, String department, int credits, String description, String outcomes, String contactEmail, String contactName) throws SQLException {
@@ -106,6 +114,14 @@ public class Queries {
 	public static ResultSet getEveryCID(Connection con) throws SQLException {
 		java.sql.Statement stmt = con.createStatement();
 		return stmt.executeQuery("SELECT CID FROM COURSE");
+	}
+	
+	//Get the Max CID of every course
+	public static int getMaxCID(Connection con) throws SQLException {
+		java.sql.Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT MAX(CID) FROM COURSE");
+		rs.next();
+		return rs.getInt(1);
 	}
 	
 	//Get every course CID of every course no offered at Bellevue College

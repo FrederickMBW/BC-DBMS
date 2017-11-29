@@ -199,9 +199,11 @@ public class JPEquivalentCourse extends JPanel {
         				updateWindow(con);
 					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "You have successfully added an equivalent course.", "Nice Job!", JOptionPane.INFORMATION_MESSAGE);
 				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Failed to Add", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.mySqlErrorMessage(e1);
 				} catch (NumberFormatException e2) {
-					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Failed to Update", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.numberFormatErrorMessage(e2);
+				} catch (IllegalArgumentException e3) {
+					CommonDialogs.illegalArgumnetExceptionMessage(e3);
 				}
             }
         });
@@ -213,14 +215,14 @@ public class JPEquivalentCourse extends JPanel {
 	    				ResultSet rs = Queries.getEquivalentInfo(con, getCID1(), getCID2());
 	    				if (rs.next()) {
 	    					updateCourse(con);
-	    					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "You have successfully updated an equivalent course.", "Nice Job!", JOptionPane.INFORMATION_MESSAGE);
+	    					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "You have successfully updated an equivalent course.", "Congratulations!", JOptionPane.INFORMATION_MESSAGE);
 	    				} else {
-	    					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Create Equivalent Course First!", "Error", JOptionPane.ERROR_MESSAGE);
+	    					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Create an Equivalent Course First!", "Error", JOptionPane.ERROR_MESSAGE);
 	    				}
 				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Failed to Update", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.mySqlErrorMessage(e1);
 				} catch (NumberFormatException e2) {
-					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Failed to Update", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.numberFormatErrorMessage(e2);
 				}
 	        }
         });
@@ -231,7 +233,7 @@ public class JPEquivalentCourse extends JPanel {
 	    			try {
 					searchAndDisplay(con);
 				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "MySql Error", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.mySqlErrorMessage(e1);
 				}
 	        }
         });
@@ -250,9 +252,9 @@ public class JPEquivalentCourse extends JPanel {
 	    				updateCourse1(con);
 	    				updateWindow(con);
 	    			} catch (SQLException e1) {
-	    				JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+	    				CommonDialogs.mySqlErrorMessage(e1);
 				} catch (NumberFormatException e2) {
-					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Failed to Update", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.numberFormatErrorMessage(e2);
 				}
 	    		}
         });
@@ -264,9 +266,9 @@ public class JPEquivalentCourse extends JPanel {
 	    				updateCourse2(con);
 	    				updateWindow(con);
 	    			} catch (SQLException e1) {
-	    				JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Error", "Error", JOptionPane.ERROR_MESSAGE);
+	    				CommonDialogs.mySqlErrorMessage(e1);
 				} catch (NumberFormatException e2) {
-					JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Failed to Update", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.numberFormatErrorMessage(e2);
 				}
 	    		}
         });
@@ -338,13 +340,14 @@ public class JPEquivalentCourse extends JPanel {
     }
     
     //Add a course equivalancy to the database
-    public void addCourse(Connection con) throws SQLException, NumberFormatException {
+    public void addCourse(Connection con) throws SQLException, NumberFormatException, IllegalArgumentException {
     		int intCID1 = getCID1();
     		int intCID2 = getCID2();
     		boolean blIsEquivalent = getIsEquivalent();
     		String strComment = getComment();
     		String strSID = getSID();
 
+    		illegalDataFieldsCheck(intCID1, intCID2);
     		Queries.addEquivalentCourse(con, intCID1, intCID2, blIsEquivalent, strComment, strSID);
     }
     
@@ -371,12 +374,6 @@ public class JPEquivalentCourse extends JPanel {
 	    			tfCourseTitle1.setBackground(Color.LIGHT_GRAY);
 	    			tfCourseDepartment1.setBackground(Color.LIGHT_GRAY);
 	    			tfCourseSchoolName1.setBackground(Color.LIGHT_GRAY);
-	    			
-	    			//TODO - Make Work!
-	    			tfCourseName1.setHorizontalAlignment(JTextField.LEFT);
-	    			tfCourseTitle1.setHorizontalAlignment(JTextField.LEFT);
-	    			tfCourseDepartment1.setHorizontalAlignment(JTextField.LEFT);
-	    			tfCourseSchoolName1.setHorizontalAlignment(JTextField.LEFT);
 	    		} else {
 	    			JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Course Not Found", "Error", JOptionPane.ERROR_MESSAGE);
 	    		}
@@ -411,7 +408,6 @@ public class JPEquivalentCourse extends JPanel {
 	    			tfCourseTitle2.setText(rsCourseInfo.getString(4));
 	    			tfCourseDepartment2.setText(rsCourseInfo.getString(5));
 	    			tfCourseSchoolName2.setText(rsSchoolName.getString(1));
-	    			//TODO
 	    			
 	    			tfCourseName2.setEditable(false);
 	    			tfCourseTitle2.setEditable(false);
@@ -422,12 +418,6 @@ public class JPEquivalentCourse extends JPanel {
 	    			tfCourseTitle2.setBackground(Color.LIGHT_GRAY);
 	    			tfCourseDepartment2.setBackground(Color.LIGHT_GRAY);
 	    			tfCourseSchoolName2.setBackground(Color.LIGHT_GRAY);
-	    			
-	    			//TODO - Make Work!
-	    			tfCourseName2.setHorizontalAlignment(JTextField.LEFT);
-	    			tfCourseTitle2.setHorizontalAlignment(JTextField.LEFT);
-	    			tfCourseDepartment2.setHorizontalAlignment(JTextField.LEFT);
-	    			tfCourseSchoolName2.setHorizontalAlignment(JTextField.LEFT);
 	    		} else {
 	    			JOptionPane.showMessageDialog(JPEquivalentCourse.this, "Course Not Found", "Error", JOptionPane.ERROR_MESSAGE);
 	    		} 
@@ -465,21 +455,18 @@ public class JPEquivalentCourse extends JPanel {
     		}
     }
     
-    //Search for an eqivilant course with the given information
-    //Create a popup with all the equivalent courses that match given information
+    //Search for an equivalent course with the given information
+    //Create a pop up with all the equivalent courses that match given information
     public void searchAndDisplay(Connection con) throws SQLException {
-    	
-    	//tfCourseName1, tfCourseTitle1, tfCourseDepartment1, tfCourseSchoolName1,
-
-    		//Get all the data from the fields and add wild cards to every space, the front, and the end
-    		String strCourseName1 = "%" + getCourseName1().replace(' ', '%') + "%";
-    		String strCourseName2 = "%" + getCourseName2().replace(' ', '%') + "%";
-    		String strCourseTitle1 = "%" + getCourseTitle1().replace(' ', '%') + "%";
-    		String strCourseTitle2 = "%" + getCourseTitle2().replace(' ', '%') + "%";
-    		String strCourseDepartment1 = "%" + getCourseDepartment1().replace(' ', '%') + "%";
-    		String strCourseDepartment2 = "%" + getCourseDepartment2().replace(' ', '%') + "%";
-    		String strCourseSchoolName1 = "%" + getCourseSchoolName1().replace(' ', '%') + "%";
-    		String strCourseSchoolName2 = "%" + getCourseSchoolName2().replace(' ', '%') + "%";
+    		//Get all the data from the fields and edit format with helper method
+    		String strCourseName1 = SearchHelper.searchHelper(getCourseName1());
+    		String strCourseName2 = SearchHelper.searchHelper(getCourseName2());
+    		String strCourseTitle1 = SearchHelper.searchHelper(getCourseTitle1());
+    		String strCourseTitle2 = SearchHelper.searchHelper(getCourseTitle2());
+    		String strCourseDepartment1 = SearchHelper.searchHelper(getCourseDepartment1());
+    		String strCourseDepartment2 = SearchHelper.searchHelper(getCourseDepartment2());
+    		String strCourseSchoolName1 = SearchHelper.searchHelper(getCourseSchoolName1());
+    		String strCourseSchoolName2 = SearchHelper.searchHelper(getCourseSchoolName2());
     		
     		//Query for all the matching schools
     		ResultSet rs = Queries.searchEquivalent(con, strCourseName1, strCourseName2, strCourseTitle1, strCourseTitle2, strCourseDepartment1, strCourseDepartment2, strCourseSchoolName1, strCourseSchoolName2);
@@ -501,7 +488,7 @@ public class JPEquivalentCourse extends JPanel {
 		}
     }
     
-   //Update a course equivalency
+   //Update a course equivalent
    public void updateCourse(Connection con) throws SQLException {
 		int intCID1 = getCID1();
 		int intCID2 = getCID2();
@@ -509,8 +496,25 @@ public class JPEquivalentCourse extends JPanel {
 		String strComment = getComment();
 		String strSID = getSID();
 	   
-	   Queries.updateCourseEquivalent(con, intCID1, intCID2, blIsEquivalent, strComment, strSID);
+		Queries.updateCourseEquivalent(con, intCID1, intCID2, blIsEquivalent, strComment, strSID);
    }
+   
+   //Make sure none of the NOT NULL data fields in the database are blank
+	public void illegalDataFieldsCheck(int CID1, int CID2) throws IllegalArgumentException{
+	   String exceptionMessage = "";
+	   
+	   if (CID1 == 0) {
+		   exceptionMessage += "CID1 Can't Be 0\n";
+	   }
+	   
+	   if (CID2 == 0) {
+		   exceptionMessage += "CID2 Can't Be 0\n";
+	   }
+	   
+	   if (!exceptionMessage.equals("")) {
+		   throw new IllegalArgumentException(exceptionMessage);
+	   }
+	}
    
    //Clear all data fields
    public void clearFields() {

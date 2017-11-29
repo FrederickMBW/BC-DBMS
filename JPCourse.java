@@ -193,11 +193,11 @@ public class JPCourse extends JPanel {
 						updateCourse(con);
 						JOptionPane.showMessageDialog(JPCourse.this, "You have successfully updated a course.", "You Did It!", JOptionPane.INFORMATION_MESSAGE);
 					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(JPCourse.this, "MySQL Error \n" + e1.getStackTrace(), "Error", JOptionPane.ERROR_MESSAGE);
+						CommonDialogs.mySqlErrorMessage(e1);
 					} catch (NumberFormatException e2) {
-						JOptionPane.showMessageDialog(JPCourse.this, "Number Formatting Error", "Error", JOptionPane.ERROR_MESSAGE);
+						CommonDialogs.numberFormatErrorMessage(e2);
 					} catch (IllegalArgumentException e3) {
-						JOptionPane.showMessageDialog(JPCourse.this, "Illegal Argument Error", "Error", JOptionPane.ERROR_MESSAGE);
+						CommonDialogs.illegalArgumnetExceptionMessage(e3);
 					}
         			} else {
         				JOptionPane.showMessageDialog(JPCourse.this, "Can't Update CID of 0!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -208,7 +208,7 @@ public class JPCourse extends JPanel {
         //Clear all data fields when button is clicked
         btnClear.addActionListener(new ActionListener() {
 	    		public void actionPerformed(ActionEvent e) {
-	    			cbAllCID.setSelectedIndex(0);;
+	    			cbAllCID.setSelectedIndex(0);
 	        }
         });
         
@@ -218,14 +218,14 @@ public class JPCourse extends JPanel {
 	    			if (getCID() == 0) {
 		    			try {
 						addCourse(con);
-						//updatejbAllCID(con); TODO - Implement 
+						updatejbAllCID(con);
 						JOptionPane.showMessageDialog(JPCourse.this, "You have successfully added a course.", "Nice Job!", JOptionPane.INFORMATION_MESSAGE);
 					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(JPCourse.this, "MySql Error", "Error", JOptionPane.ERROR_MESSAGE);
+						CommonDialogs.mySqlErrorMessage(e1);
 					} catch (NumberFormatException e2) {
-						JOptionPane.showMessageDialog(JPCourse.this, "Number Format Error", "Error", JOptionPane.ERROR_MESSAGE);
+						CommonDialogs.numberFormatErrorMessage(e2);
 					} catch (IllegalArgumentException e3) {
-						JOptionPane.showMessageDialog(JPCourse.this, "Illegal Argument Error", "Error", JOptionPane.ERROR_MESSAGE);
+						CommonDialogs.illegalArgumnetExceptionMessage(e3);
 					}
 	    			} else {
 	    				JOptionPane.showMessageDialog(JPCourse.this, "CID Must Be Zero To Add A Course!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -240,9 +240,9 @@ public class JPCourse extends JPanel {
 	    			try {
 	    				updateFields(con);
 	    			} catch (SQLException e1) {
-	    				JOptionPane.showMessageDialog(JPCourse.this, "MySql Error", "Error", JOptionPane.ERROR_MESSAGE);
+	    				CommonDialogs.mySqlErrorMessage(e1);
 				} catch (NumberFormatException e2) {
-					JOptionPane.showMessageDialog(JPCourse.this, "Number Format Error", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.numberFormatErrorMessage(e2);
 				}
 	    		}
         });
@@ -253,9 +253,9 @@ public class JPCourse extends JPanel {
 	    			try {
 	    				updateSchoolName(con);
 	    			} catch (SQLException e1) {
-	    				JOptionPane.showMessageDialog(JPCourse.this, "MySql Error", "Error", JOptionPane.ERROR_MESSAGE);
+	    				CommonDialogs.mySqlErrorMessage(e1);
 				} catch (NumberFormatException e2) {
-					JOptionPane.showMessageDialog(JPCourse.this, "Number Format Error", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.numberFormatErrorMessage(e2);
 				}
 	    		}
         });
@@ -266,19 +266,20 @@ public class JPCourse extends JPanel {
 	    			try {
 	    				searchAndDisplay(con);
 	    			} catch (SQLException e1) {
-	    				JOptionPane.showMessageDialog(JPCourse.this, "MySql Error", "Error", JOptionPane.ERROR_MESSAGE);
+	    				CommonDialogs.mySqlErrorMessage(e1);
 				} catch (NumberFormatException e2) {
-					JOptionPane.showMessageDialog(JPCourse.this, "Number Format Error", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.numberFormatErrorMessage(e2);
 				}
 	    		}
         });
 	}
 	
-//	TODO - Implement	
-//	//Update the JComboBox with all CID
-//	public void updatejbAllCID(Connection con) throws SQLException {
-//
-//	}
+	//Update the JComboBox with all CID
+	public void updatejbAllCID(Connection con) throws SQLException {
+		int maxCID = Queries.getMaxCID(con);
+		cbAllCID.addItem(maxCID);
+		cbAllCID.setSelectedIndex(cbAllCID.getItemCount() - 1);
+	}
 	
 	//Return the CID 
     public int getCID() throws NumberFormatException {
@@ -349,11 +350,7 @@ public class JPCourse extends JPanel {
     		String strContactEmail = getContactEmail();
     		String strContactName = getContactName();
     		
-    		if (illegalDataFields(intSID, strName, strTitle)) {
-    			throw new IllegalArgumentException();
-    		}
-    		
-    		//Update the course
+    		illegalDataFieldsCheck(intSID, strName, strTitle);;
     		Queries.updateCourse(con, intCID, intSID, strName, strTitle, strDepartment, intCredits, strDescription, strOutcomes, strContactEmail, strContactName);
     }
     
@@ -371,7 +368,6 @@ public class JPCourse extends JPanel {
     			//Update all the fields with the associated data
     			if (rs.next()) {
     				cbSID.setSelectedItem(rs.getInt(2));;
-	    			rs.getString(3);
 	    			tfName.setText(rs.getString(3));
 	    			tfTitle.setText(rs.getString(4));
 	    			tfDepartment.setText(rs.getString(5));
@@ -403,11 +399,8 @@ public class JPCourse extends JPanel {
     		
     		//Add the course to the database!
     	    //Unless passing an illegal argument
-    	    if (illegalDataFields(intSID, strName, strTitle)) {
-    	    		throw new IllegalArgumentException();
-    	    } else {
-    	    		Queries.addCourse(con, intSID, strName, strTitle, strDepartment, intCredits, strDescription, strOutcomes, strContactEmail, strContactName);
-    	    }
+    		illegalDataFieldsCheck(intSID, strName, strTitle);
+    	    	Queries.addCourse(con, intSID, strName, strTitle, strDepartment, intCredits, strDescription, strOutcomes, strContactEmail, strContactName);
 
     		//Clear all the fields
     		cbAllCID.setSelectedIndex(0);
@@ -416,11 +409,14 @@ public class JPCourse extends JPanel {
     
     //Create a pop up for the result of the search
     public void searchAndDisplay(Connection con) throws SQLException, NumberFormatException {
-    		String strCourseName = "%" + getName().replace(' ', '%') + "%";
-    		String strCourseTitle = "%" + getTitle().replace(' ', '%') + "%";
-    		String strCourseDepartment = "%" + getDepartment().replace(' ', '%') + "%";
-    		int intSID = getSID();
-    		String strSchoolName = "%" + getSchoolName().replace(' ', '%') + "%";
+    		//Declare and initialize all the variables
+    		//Get all the data from the fields and edit format with helper method
+		String strCourseName = SearchHelper.searchHelper(getName());
+		String strCourseTitle = SearchHelper.searchHelper(getTitle());
+		String strCourseDepartment = SearchHelper.searchHelper(getDepartment());
+		int intSID = getSID();
+		String strSchoolName = SearchHelper.searchHelper(getSchoolName());
+ 
     		ResultSet rsResults;
     		JTable jtbResult;
     		int intWidth;
@@ -458,14 +454,6 @@ public class JPCourse extends JPanel {
     		new PopUp(new JScrollPane(jtbResult), "Results", intWidth, 300);
     }
     
-    //Make sure none of the NOT NULL data fields in the database are blank and that SID != 0
-    public boolean illegalDataFields(int intSID, String strName, String strTitle) {
-    		if (strName.equals("") || strTitle.equals("") || intSID == 0) {
-    			return true;
-    		}
-    		return false;
-    }
-    
     //Update the school name
     public void updateSchoolName(Connection con) throws SQLException {
     		int intSID = getSID();
@@ -496,5 +484,25 @@ public class JPCourse extends JPanel {
 		taOutcomes.setText("");
 		tfContactEmail.setText("");
 		tfContactName.setText("");
+    }
+    
+    //Make sure none of the NOT NULL data fields in the database are blank and that SID != 0
+    public void illegalDataFieldsCheck(int intSID, String strName, String strTitle) throws IllegalArgumentException{
+    		String exceptionMessage = "";
+		if (strName.equals("")) {
+			exceptionMessage += "Name Can't Be Blank \n";
+		}
+			
+		if (strTitle.equals("")) {
+			exceptionMessage += "Title Can't Be Blank \n";
+		}
+		
+		if (intSID == 0) {
+			exceptionMessage += "SID Can't Be 0 \n";
+		}
+		
+		if (!exceptionMessage.equals("")) {
+			throw new IllegalArgumentException(exceptionMessage);
+		}
     }
 }

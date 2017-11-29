@@ -133,10 +133,12 @@ public class JPSchool extends JPanel {
 	        			try {
 						updateSchool(con);
 						JOptionPane.showMessageDialog(JPSchool.this, "You have successfully updated a school.", "You Did It!", JOptionPane.INFORMATION_MESSAGE);
-					} catch (SQLException|NumberFormatException e1) {
-						JOptionPane.showMessageDialog(JPSchool.this, "MySql Error", "Error", JOptionPane.ERROR_MESSAGE);
+					} catch (SQLException e1) {
+						CommonDialogs.mySqlErrorMessage(e1);
+					} catch (NumberFormatException e2) {
+						CommonDialogs.numberFormatErrorMessage(e2);
 					}catch (IllegalArgumentException e3) {
-						JOptionPane.showMessageDialog(JPSchool.this, "Illegal Argument Error", "Error", JOptionPane.ERROR_MESSAGE);
+						CommonDialogs.illegalArgumnetExceptionMessage(e3);
 					}
         			} else {
         				JOptionPane.showMessageDialog(JPSchool.this, "Can't Update SID 0!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -153,12 +155,12 @@ public class JPSchool extends JPanel {
 		    			try {
 						addSchool(con);
 						cbAllSID.setSelectedIndex(0);;
-						//updatejbAllSID(con); TODO
+						updatejbAllSID(con);
 						JOptionPane.showMessageDialog(JPSchool.this, "You have successfully added a school.", "High Five!", JOptionPane.INFORMATION_MESSAGE);
 					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(JPSchool.this, "Mysql Error", "Error", JOptionPane.ERROR_MESSAGE);
+						CommonDialogs.mySqlErrorMessage(e1);
 					} catch (IllegalArgumentException e3) {
-						JOptionPane.showMessageDialog(JPSchool.this, "Illegal Argument Error", "Error", JOptionPane.ERROR_MESSAGE);
+						CommonDialogs.illegalArgumnetExceptionMessage(e3);
 					}
 	    			} else {
 	    				JOptionPane.showMessageDialog(JPSchool.this, "SID Must Be 0 To Add A School", "Error", JOptionPane.ERROR_MESSAGE);
@@ -180,8 +182,10 @@ public class JPSchool extends JPanel {
 	    			if (getSID() != 0) {
 		    			try {
 		    				updateFields(con);
-		    			} catch (SQLException|NumberFormatException e1) {
-		    				JOptionPane.showMessageDialog(JPSchool.this, "Load Failed", "Error", JOptionPane.ERROR_MESSAGE);
+		    			} catch (SQLException e1) {
+		    				CommonDialogs.mySqlErrorMessage(e1);
+					} catch (NumberFormatException e2) {
+						CommonDialogs.numberFormatErrorMessage(e2);
 					}
 	    			} else {
 	    				clearFields();
@@ -195,7 +199,7 @@ public class JPSchool extends JPanel {
 	    			try {
 					searchAndDisplay(con);
 				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(JPSchool.this, "MySql Error", "Error", JOptionPane.ERROR_MESSAGE);
+					CommonDialogs.mySqlErrorMessage(e1);
 				}
 	        }
         });
@@ -251,11 +255,8 @@ public class JPSchool extends JPanel {
     		
     		//Update the school in the database
     		//Only Update if name is not blank
-    		if (illegalDataFields(strName)) {
-    			throw new IllegalArgumentException();
-    		} else {
-    			Queries.updateSchool(con, intSID, strOID, strName, strAddress, strCity, strState, strZip);
-    		}
+    		illegalDataFieldsCheck(strName);
+    		Queries.updateSchool(con, intSID, strOID, strName, strAddress, strCity, strState, strZip);
     }
     
     //Load the data for a school into data fields
@@ -292,11 +293,9 @@ public class JPSchool extends JPanel {
 
     		//If name is blank, give an error message
     		//Otherwise add the school to the database
-    		if (illegalDataFields(strName)) {
-    			throw new IllegalArgumentException();
-    		} else {
-    			Queries.addSchool(con, strOID, strName, strAddress, strCity, strState, strZip);
-    		}
+    		illegalDataFieldsCheck(strName);
+
+    		Queries.addSchool(con, strOID, strName, strAddress, strCity, strState, strZip);
     }
     
     //Search for a school with the given information
@@ -306,13 +305,13 @@ public class JPSchool extends JPanel {
     		ResultSet rs;
     	
     		if (getSID() == 0) {
-	    		//Get all the data from the fields and add wild cards to every space, the front, and the end
-	    		String strOID = "%" + getOID().replace(' ', '%') + "%";
-	    		String strName = "%" + getName().replace(' ', '%') + "%";
-	    		String strAddress = "%" + getAddress().replace(' ', '%') + "%";
-	    		String strCity = "%" + getCity().replace(' ', '%') + "%";
-	    		String strState = "%" + getState().replace(' ', '%') + "%";
-	    		String strZipCode =  "%" + getZipCode().replace(' ', '%') + "%";
+    			//Get all the data from the fields and edit format with helper method
+	    		String strOID = SearchHelper.searchHelper(getOID());
+	    		String strName = SearchHelper.searchHelper(getName());
+	    		String strAddress = SearchHelper.searchHelper(getAddress());
+	    		String strCity = SearchHelper.searchHelper(getCity());
+	    		String strState = SearchHelper.searchHelper(getState());
+	    		String strZipCode = SearchHelper.searchHelper(getZipCode());
 	    		
 	    		//Query for all the matching schools
 	    		rs = Queries.searchSchool(con, strOID, strName, strAddress, strCity, strState, strZipCode);
@@ -346,16 +345,17 @@ public class JPSchool extends JPanel {
 		tfZip.setText("");
     }
     
-    //Make sure none of the NOT NULL data fields in the database are blank and that SID != 0
-    public boolean illegalDataFields(String strName) {
+    //Make sure none of the NOT NULL data fields in the database are blank
+    public void illegalDataFieldsCheck(String strName) throws IllegalArgumentException{
     		if (strName.equals("")) {
-    			return true;
+    			throw new IllegalArgumentException("Missing School Name!\n");
     		}
-    		return false;
     }
-    	
-//    //Update jbAllSID to include all SIDs // TODO
-//	public void updatejbAllSID(Connection con) {
-//    	
-//    }
+    
+    //Update jbAllSID to include all SIDs // TODO
+	public void updatejbAllSID(Connection con) throws SQLException {
+		int maxSID = Queries.getMaxSID(con);
+		cbAllSID.addItem(maxSID);
+		cbAllSID.setSelectedIndex(cbAllSID.getItemCount() - 1);
+    }
 }
