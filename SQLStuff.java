@@ -242,7 +242,7 @@ public class SQLStuff
                 stmt.setString(2, f[0]);
                 stmt.executeUpdate();
             }
-            CommonDialogs.standardErrorMessage("Update successful","Student record has been updated.");
+            CommonDialogs.standardMessageBox("Update successful","Student record has been updated.");
         }
         catch (SQLException ex)
         {
@@ -301,7 +301,7 @@ public class SQLStuff
             stmt.setString(6,f[13]);
             stmt.setString(7,"1");
             stmt.executeUpdate();
-            CommonDialogs.standardErrorMessage("Student addition successful","Student has been added to the database.");
+            CommonDialogs.standardMessageBox("Student addition successful","Student has been added to the database.");
         }
         catch (SQLException ex)
         {
@@ -657,7 +657,7 @@ public class SQLStuff
                 //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
-            CommonDialogs.standardErrorMessage("Update successful","Device record has been updated.");
+            CommonDialogs.standardMessageBox("Update successful","Device record has been updated.");
         }
         catch (SQLException ex)
         {
@@ -717,7 +717,7 @@ public class SQLStuff
             stmt.setString(3,f[4]);
             //System.out.println(query2);
             stmt.executeUpdate();
-            CommonDialogs.standardErrorMessage("Device addition successful","Device has been added to the database.");
+            CommonDialogs.standardMessageBox("Device addition successful","Device has been added to the database.");
         }
         catch (SQLException ex)
         {
@@ -1034,7 +1034,7 @@ public class SQLStuff
                 //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
-            CommonDialogs.standardErrorMessage("Update successful","Book record has been updated.");
+            CommonDialogs.standardMessageBox("Update successful","Book record has been updated.");
         }
         catch (SQLException ex)
         {
@@ -1099,7 +1099,7 @@ public class SQLStuff
             stmt.setString(7,f[8]);
             //System.out.println(query2);
             stmt.executeUpdate();
-            CommonDialogs.standardErrorMessage("Book addition successful","Book has been added to the database.");
+            CommonDialogs.standardMessageBox("Book addition successful","Book has been added to the database.");
         }
         catch (SQLException ex)
         {
@@ -1146,7 +1146,7 @@ public class SQLStuff
             String query = "select * from books_view s";
             query += " where s.book_id <> ''";
             if (!f[0].equals(""))
-                query = query + "and s.item_id = '" + f[0] + "'";
+                query = query + " and s.item_id = '" + f[0] + "'";
             if (!f[1].equals(""))
                 query = query + " and s.book_id = '" + f[1] + "'";
             if (!f[2].equals(""))
@@ -1164,7 +1164,7 @@ public class SQLStuff
             if (!f[8].equals(""))
                 query = query + " and s.book_condition = '" + f[8] + "'";
             if (!f[9].equals(""))
-                query = query + " and s.price = " + f[10];
+                query = query + " and s.price = " + f[9];
             if (!f[10].equals("")) {
                 if (f[10].length() == 4)
                     query = query + " and s.date_of_purchase = '" + f[10] + "-00-00'";
@@ -1393,7 +1393,7 @@ public class SQLStuff
                 //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
-            CommonDialogs.standardErrorMessage("Update successful","General item record has been updated.");
+            CommonDialogs.standardMessageBox("Update successful","General item record has been updated.");
         }
         catch (SQLException ex)
         {
@@ -1438,7 +1438,7 @@ public class SQLStuff
             else
                 stmt.setString(4,f[4]);
             stmt.executeUpdate();
-            CommonDialogs.standardErrorMessage("General item addition successful","General item record has been updated.");
+            CommonDialogs.standardMessageBox("General item addition successful","General item record has been updated.");
         }
         catch (SQLException ex)
         {
@@ -1663,7 +1663,7 @@ public class SQLStuff
                 //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
-            CommonDialogs.standardErrorMessage("Update successful","Checkout record has been updated.");
+            CommonDialogs.standardMessageBox("Update successful","Checkout record has been updated.");
         }
         catch (SQLException ex)
         {
@@ -1718,7 +1718,7 @@ public class SQLStuff
                 }
                 stmt.setString(4, f[4]);
                 stmt.executeUpdate();
-                CommonDialogs.standardErrorMessage("Checkout addition successful","Checkout information has been added to the database.");
+                CommonDialogs.standardMessageBox("Checkout addition successful","Checkout information has been added to the database.");
             } else
                 CommonDialogs.standardErrorMessage("Error","Item isn't available to check out.");
         }
@@ -2064,7 +2064,7 @@ public class SQLStuff
                 //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
-            CommonDialogs.standardErrorMessage("Update successful","Maintenance record has been updated.");
+            CommonDialogs.standardMessageBox("Update successful","Maintenance record has been updated.");
         }
         catch (SQLException ex)
         {
@@ -2131,7 +2131,7 @@ public class SQLStuff
                 }
                 //System.out.println(stmt.toString());
                 stmt.executeUpdate();
-                CommonDialogs.standardErrorMessage("Maintenance addition successful","Maintenance record has been added to the database.");
+                CommonDialogs.standardMessageBox("Maintenance addition successful","Maintenance record has been added to the database.");
             } else
                 CommonDialogs.standardErrorMessage("Error","Item isn't available to send out.");
         }

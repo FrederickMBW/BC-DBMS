@@ -281,7 +281,7 @@ public class BasicSwing extends JFrame{
        for (int i = size;i>=0;i--) {
            model.removeRow(i);
        }
-       System.out.println("clearTable successful");
+       //System.out.println("clearTable successful");
    }
 
 
@@ -336,7 +336,7 @@ public class BasicSwing extends JFrame{
                 //comparators2.setSelectedIndex(0);
                 //statusChoices.setSelectedIndex(0);
                 //yesNo.setSelectedIndex(0);
-                System.out.println("Fields cleared successfully");
+                //System.out.println("Fields cleared successfully");
             }
         });
 
@@ -487,7 +487,7 @@ public class BasicSwing extends JFrame{
                 if (studentGetter.isValid()) {
                     clearFields.doClick();
                     String temp = (String) studentGetter.getSelectedItem();
-                    System.out.println(temp);
+                    //System.out.println(temp);
                     temp = temp.substring(0, 9);
                     field1s8.setText(temp);
                     getStudentButton.doClick();
@@ -685,7 +685,7 @@ public class BasicSwing extends JFrame{
                 if (deviceGetter.isValid()) {
                     clearFields.doClick();
                     String temp = (String) deviceGetter.getSelectedItem();
-                    System.out.println(temp);
+                    //System.out.println(temp);
                     temp = temp.substring(0, 6);
                     field13s7.setText(temp);
                     getDeviceButton.doClick();
@@ -862,9 +862,9 @@ public class BasicSwing extends JFrame{
                 if (bookGetter.isValid()) {
                     clearFields.doClick();
                     String temp = (String) bookGetter.getSelectedItem();
-                    System.out.println(temp);
+                    //System.out.println(temp);
                     temp = temp.substring(0, 4);//SUBJECT TO CHANGE. SAME WITH DEVICES
-                    field13s7.setText(temp);
+                    field4s3.setText(temp);
                     getBookButton.doClick();
                 }
             }
@@ -1017,7 +1017,7 @@ public class BasicSwing extends JFrame{
                 if (genericItemGetter.isValid()) {
                     clearFields.doClick();
                     String temp = (String) genericItemGetter.getSelectedItem();
-                    System.out.println(temp);
+                    //System.out.println(temp);
                     temp = temp.substring(0, 3);
                     field6s3.setText(temp);
                     getGenericItemButton.doClick();
@@ -1340,7 +1340,7 @@ public class BasicSwing extends JFrame{
                 if (maintenanceGetter.isValid()) {
                     clearFields.doClick();
                     String temp = (String) maintenanceGetter.getSelectedItem();
-                    System.out.println(temp);
+                    //System.out.println(temp);
                     field5s8.setText(temp.substring(0,10));
                     field8s8.setText(temp.substring(11,19));
                     field6s3.setText(temp.substring(20,24));
@@ -1409,8 +1409,8 @@ public class BasicSwing extends JFrame{
                 searchCheckout.setVisible(false);
                 searchMaintenance.setVisible(false);
                 setSize(700, 123);
-//                System.out.println("test1");
-//                System.out.println("test2");
+//                //System.out.println("test1");
+//                //System.out.println("test2");
 //                model.setColumnCount(0);
 //
 //                test2.add(searchStudentButton);
