@@ -969,6 +969,8 @@ public class SQLStuff
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[3]).equals(f[3]) ){//status
+                if (f[3].equals("All"))
+                    f[3] = "Available";
                 stmt = conn.prepareStatement(query2);
                 stmt.setString(1, f[3]);
                 stmt.setString(2, f[0]);
@@ -1076,10 +1078,11 @@ public class SQLStuff
             stmt.setString(3,f[9]);
             if (f[10].length() == 4)
                 stmt.setString(4,f[10] + "-00-00");
-            else if (f[6].length() == 0)
-                stmt.setString(4,"0000-00-00");
-            else
-                stmt.setString(4,f[10]);
+            else if (f[10].length() == 0) {
+                stmt.setString(4, "0000-00-00");
+            } else {
+                stmt.setString(4, f[10]);
+            }
             stmt.executeUpdate();
             genericItemAdded = true;
             String query3 = "select * from generic_item where item_id = (select max(item_id) from generic_item)";
@@ -1367,6 +1370,8 @@ public class SQLStuff
                 stmt.executeUpdate();
             }
             if (!rs.getString(genericItemSQLcolumns[2]).equals(f[2])) {//status
+                if (f[2].equals("All"))
+                    f[2] = "Available";
                 query1 = "update generic_item set " + genericItemSQLcolumns[2] + " = ? where item_id = ?";
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[2]);
@@ -1438,7 +1443,7 @@ public class SQLStuff
             else
                 stmt.setString(4,f[4]);
             stmt.executeUpdate();
-            CommonDialogs.standardMessageBox("General item addition successful","General item record has been updated.");
+            CommonDialogs.standardMessageBox("General item addition successful","General item record has been added to the database.");
         }
         catch (SQLException ex)
         {
@@ -1474,7 +1479,7 @@ public class SQLStuff
             if (!f[2].equals("All"))
                 query = query + " and s.status = '" + f[2] + "'";
             if (!f[3].equals(""))
-                query = query + " and s.price = " + f[4];
+                query = query + " and s.price = " + f[3];
             if (!f[4].equals("")) {
                 if (f[4].length() == 4)
                     query = query + " and s.date_of_purchase = '" + f[4] + "-00-00'";
@@ -1841,12 +1846,12 @@ public class SQLStuff
             }
             if (!f[7].equals("")) {
                 if (!f[8].equals(""))
-                    query = query + " and s.date_checked_out like '" + f[7] + " " + f[8] + "%'";
+                    query = query + " and s.date_returned like '" + f[7] + " " + f[8] + "%'";
                 else
-                    query = query + " and s.date_checked_out like '%" + f[7] + "%'";
+                    query = query + " and s.date_returned like '%" + f[7] + "%'";
             } else {
                 if (!f[8].equals(""))
-                    query = query + " and s.date_checked_out like '%" + f[8] + "%'";
+                    query = query + " and s.date_returned like '%" + f[8] + "%'";
             }
             query = query + " order by " + f[9];
             //System.out.println(query);
