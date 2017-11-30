@@ -242,6 +242,7 @@ public class SQLStuff
                 stmt.setString(2, f[0]);
                 stmt.executeUpdate();
             }
+            CommonDialogs.standardErrorMessage("Update successful","Student record has been updated.");
         }
         catch (SQLException ex)
         {
@@ -300,6 +301,7 @@ public class SQLStuff
             stmt.setString(6,f[13]);
             stmt.setString(7,"1");
             stmt.executeUpdate();
+            CommonDialogs.standardErrorMessage("Student addition successful","Student has been added to the database.");
         }
         catch (SQLException ex)
         {
