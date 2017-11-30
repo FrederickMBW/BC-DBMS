@@ -106,7 +106,7 @@ delimiter ;
 delimiter v
 create trigger maint_update_status after insert on maintenance
 	for each row begin
-	update generic_item set generic_item.Status = ('repairing')
+	update generic_item set generic_item.Status = ('Repairing')
 		where generic_item.item_id = new.item_id and isnull(new.date_maintainance_end);
 		end; v
 delimiter ;
@@ -118,7 +118,7 @@ delimiter v
 create trigger rent_return_status before update on checking_out_item
 	for each row begin
     if (new.date_returned < new.date_checked_out) then set new.date_returned=new.date_checked_out; end if;
-	update generic_item set generic_item.Status = ('available')
+	update generic_item set generic_item.Status = ('Available')
 		where generic_item.item_id = new.item_id and isnull(old.date_returned) and not isnull(new.date_returned);
 		end; v
 delimiter ;
@@ -129,7 +129,7 @@ delimiter v
 create trigger maint_return_status before update on maintenance
 	for each row begin
     if (new.date_maintainance_end < new.date_maintainance_start) then set new.date_maintainance_end=new.date_maintainance_start; end if;
-	update generic_item set generic_item.Status = ('available')
+	update generic_item set generic_item.Status = ('Available')
 		where generic_item.item_id = new.item_id and isnull(old.date_maintainance_end) and not isnull(new.date_maintainance_end);
 		end; v
 delimiter ;
