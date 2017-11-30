@@ -211,7 +211,7 @@ create view devices_view as select generic_item.item_id, device_id, item_descrip
 create view books_view as select generic_item.item_id, book_id, title, status, item_description, edition, book_type, isbn, book_condition, price, date_of_purchase from books, generic_item where books.item_id = generic_item.item_id;
 -- select * from books;
 create view maint_view as select item_description, generic_item.item_id, description_of_maintenance, date_maintainance_start, date_maintainance_end from maintenance, books, devices, generic_item where maintenance.item_id=generic_item.item_id;
-create view checkout as select bc_member.sid, namefirst, namelast, item_description, generic_item.item_id, date_checked_out, date_returned from checking_out_item, bc_member, devices, books, generic_item where checking_out_item.sid=bc_member.sid and checking_out_item.item_id=generic_item.item_id;
+create view checkout as select bc_member.sid, namefirst, namelast, item_description, generic_item.item_id, date_checked_out, date_returned from checking_out_item, bc_member, generic_item where checking_out_item.sid=bc_member.sid and checking_out_item.item_id=generic_item.item_id;
 -- select * from checking_out_item;
 create view overdue as select sid, namefirst, namelast, item_description, item_id, date_checked_out, date_returned, datediff(now(),date_checked_out)-14 as 'days_overdue' from checkout where isnull(date_returned) and datediff(now(), date_checked_out) > 14;
 
