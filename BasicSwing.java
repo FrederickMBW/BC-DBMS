@@ -139,6 +139,7 @@ public class BasicSwing extends JFrame{
     JButton editStudentQuery = new JButton("Update this student");
     //DEVICES TABLE BUTTONS
     JButton addDevicesFrame = new JButton("Add or edit a device");
+    JButton refreshDeviceGetter = new JButton("Refresh drop down");
     JButton devicesQueryTrigger = new JButton("Search");
     JButton addDeviceButton = new JButton("Add device to database");
     JButton returnToDevices = new JButton("Return");
@@ -146,6 +147,7 @@ public class BasicSwing extends JFrame{
     JButton editDeviceQuery = new JButton("Update this device");
     //BOOKS TABLE BUTTONS
     JButton addBooksFrame = new JButton("Add or edit a book");
+    JButton refreshBookGetter = new JButton("Refresh drop down");
     JButton bookQueryTrigger = new JButton("Search");
     JButton addBooksButton = new JButton("Add book to database");
     JButton returnToBooks = new JButton("Return");
@@ -153,6 +155,7 @@ public class BasicSwing extends JFrame{
     JButton editBooksQuery = new JButton("Update this book");
     //GENERIC ITEM BUTTONS
     JButton addGenericItemFrame = new JButton("Add or edit an item");
+    JButton refreshGenericItemGetter = new JButton("Refresh drop down");
     JButton genericItemQueryTrigger = new JButton("Search");
     JButton addGenericItemButton = new JButton("Add item to database");
     JButton returnToGenericItems = new JButton("Return");
@@ -160,6 +163,7 @@ public class BasicSwing extends JFrame{
     JButton editGenericItemQuery = new JButton("Update this item");
     //CHECKOUT BUTTONS
     JButton addCheckoutFrame = new JButton("Add or edit an entry");
+    JButton refreshCheckoutGetter = new JButton("Refresh drop down");
     JButton checkoutQueryTrigger = new JButton("Search");
     JButton addCheckoutButton = new JButton("Check out item");
     JButton returnToCheckout = new JButton("Return");
@@ -168,6 +172,7 @@ public class BasicSwing extends JFrame{
     JButton searchOverdueButton = new JButton("View overdue items");
     //MAINTENANCE BUTTONS
     JButton addMaintenanceFrame = new JButton("Add or edit an entry");
+    JButton refreshMaintenanceGetter = new JButton("Refresh drop down");
     JButton maintenanceQueryTrigger = new JButton("Search");
     JButton addMaintenanceButton = new JButton("Add maintenance record");
     JButton returnToMaintenance = new JButton("Return");
@@ -242,6 +247,11 @@ public class BasicSwing extends JFrame{
     JLabel hourLabel1 = new JLabel("Time (HH:MM) = ");
     JLabel hourLabel2 = new JLabel("Time (HH:MM) = ");
     JLabel maintDescriptionLabel = new JLabel("Description of maintenance: ");
+
+    JLabel a1 = new JLabel("*");
+    JLabel a2 = new JLabel("*");
+    JLabel a3 = new JLabel("*");
+
 
     JComboBox studentOrderOptions = new JComboBox(studentColumnsName);
     JComboBox devicesOrderOptions = new JComboBox(devicesColumns);
@@ -322,10 +332,11 @@ public class BasicSwing extends JFrame{
                 field15s10.setText("");
                 field16s3.setText("");
                 field17s8.setText("");
-                comparators1.setSelectedIndex(0);
-                comparators2.setSelectedIndex(0);
-                statusChoices.setSelectedIndex(0);
-                yesNo.setSelectedIndex(0);
+                //comparators1.setSelectedIndex(0);
+                //comparators2.setSelectedIndex(0);
+                //statusChoices.setSelectedIndex(0);
+                //yesNo.setSelectedIndex(0);
+                System.out.println("Fields cleared successfully");
             }
         });
 
@@ -471,11 +482,6 @@ public class BasicSwing extends JFrame{
             }
         });
 
-        studentGetter.addItem("option1");
-        studentGetter.addItem("option2");
-        studentGetter.addItem("option3");
-        studentGetter.addItem("option4");
-
         studentGetter.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (studentGetter.isValid()) {
@@ -512,6 +518,7 @@ public class BasicSwing extends JFrame{
                 //ALSO WANT A REFRESH DROPDOWN BUTTON FOR NARROWING IT DOWN
                 addStudent.add(studentGetter);
                 addStudent.add(refreshStudentGetter);
+                addStudent.add(a1);
                 addStudent.add(studentSidPanel);
                 studentFNameLike.setVisible(false);
                 fnamePanel.add(studentFNameEqual);
@@ -586,8 +593,10 @@ public class BasicSwing extends JFrame{
                 menu.setVisible(false);
                 addDevices.setVisible(false);
 
+                itemIDPanel.add(itemIDlabel);
+                itemIDPanel.add(field6s3);
                 deviceIDpanel.add(deviceIDlabel);
-                deviceIDpanel.add(field4s3);
+                deviceIDpanel.add(field13s7);
                 itemDescriptionPanel.add(itemDescriptionLabel);
                 itemDescriptionPanel.add(field17s8);
                 statusPanel.add(statusLabel);
@@ -601,8 +610,6 @@ public class BasicSwing extends JFrame{
                 pricePanel.add(field16s3);
                 dopPanel.add(dopLabel);
                 dopPanel.add(field1s8);
-                itemIDPanel.add(itemIDlabel);
-                itemIDPanel.add(field6s3);
                 //deviceContainerFrame1
                 deviceContainerFrame1.add(itemIDPanel);
                 deviceContainerFrame1.add(deviceIDpanel);
@@ -618,6 +625,9 @@ public class BasicSwing extends JFrame{
                 deviceContainerFrame1.add(devicesOrderOptions);
                 deviceContainerFrame2.add(devicesQueryTrigger);
                 deviceContainerFrame2.add(addDevicesFrame);
+                //ADD CLEAR FIELDS BUTTON TO EVERYTHING ELSE
+                //also add refresh getters to the addframes.
+                deviceContainerFrame2.add(clearFields);
                 deviceContainerFrame2.add(returnToMenu);
                 deviceContainerFrame3.add(deviceContainerFrame2,BorderLayout.NORTH);
                 deviceContainerFrame3.add(js,BorderLayout.PAGE_END);
@@ -636,7 +646,7 @@ public class BasicSwing extends JFrame{
         devicesQueryTrigger.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 clearTable();
-                String filters[] = {field6s3.getText(),field4s3.getText(),field17s8.getText(),
+                String filters[] = {field6s3.getText(),field13s7.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),field3s8.getText(),
                         (String)comparators1.getSelectedItem(),field16s3.getText(),
                         field1s8.getText(),
@@ -647,12 +657,12 @@ public class BasicSwing extends JFrame{
 
         getDeviceButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String fields[] = {field6s3.getText(),field4s3.getText(),field17s8.getText(),
+                String fields[] = {field6s3.getText(),field13s7.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),field3s8.getText(),
                         field16s3.getText(),field1s8.getText()};
                 String newFields[] = SQLStuff.get_single_device_data(fields);
                 field6s3.setText(newFields[0]);
-                field4s3.setText(newFields[1]);
+                field13s7.setText(newFields[1]);
                 field17s8.setText(newFields[2]);
                 statusChoices.setSelectedItem(newFields[3]);
                 field3s8.setText(newFields[4]);
@@ -663,17 +673,39 @@ public class BasicSwing extends JFrame{
 
         editDeviceQuery.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String fields[] = {field6s3.getText(),field4s3.getText(),field17s8.getText(),
+                String fields[] = {field6s3.getText(),field13s7.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),field3s8.getText(),
                         field16s3.getText(),field1s8.getText()};
                 SQLStuff.update_device(fields);
             }
         });
 
+        deviceGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (deviceGetter.isValid()) {
+                    clearFields.doClick();
+                    String temp = (String) deviceGetter.getSelectedItem();
+                    System.out.println(temp);
+                    temp = temp.substring(0, 6);
+                    field13s7.setText(temp);
+                    getDeviceButton.doClick();
+                }
+            }
+        });
+
+        refreshDeviceGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String fields[] = {field6s3.getText(),field13s7.getText(),field17s8.getText(),
+                        (String)statusChoices.getSelectedItem(),field3s8.getText(),
+                        field16s3.getText(),field1s8.getText()};
+                SQLStuff.updateDeviceGetter(deviceGetter,fields);
+            }
+        });
+
         addDevicesFrame.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchDevices.setVisible(false);
-                setSize(700,150);
+                setSize(700,200);
                 priceCompareLabel.setVisible(false);
                 comparators1.setVisible(false);
 
@@ -681,7 +713,10 @@ public class BasicSwing extends JFrame{
                 pricePanel.add(field16s3);
                 priceEqualLabel.setVisible(true);
 
+                addDevices.add(deviceGetter);
+                addDevices.add(refreshDeviceGetter);
                 addDevices.add(itemIDPanel);
+                addDevices.add(a1);
                 addDevices.add(deviceIDpanel);
                 addDevices.add(itemDescriptionPanel);
                 addDevices.add(statusPanel);
@@ -690,9 +725,11 @@ public class BasicSwing extends JFrame{
                 addDevices.add(dopPanel);
                 clearFields.doClick();
 
+                refreshDeviceGetter.doClick();
                 addDevices.add(addDeviceButton);
                 addDevices.add(getDeviceButton);
                 addDevices.add(editDeviceQuery);
+                addDevices.add(clearFields);
                 addDevices.add(returnToDevices);
                 add(addDevices);
                 addDevices.setVisible(true);
@@ -707,7 +744,7 @@ public class BasicSwing extends JFrame{
 
         addDeviceButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String fields[] = {field6s3.getText(),field4s3.getText(),field17s8.getText(),
+                String fields[] = {field6s3.getText(),field13s7.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),field3s8.getText(),
                         field16s3.getText(),field1s8.getText()};
                 SQLStuff.add_device(fields);
@@ -764,6 +801,7 @@ public class BasicSwing extends JFrame{
                 searchBooks.add(booksOrderOptions);
                 searchBooks.add(bookQueryTrigger);
                 searchBooks.add(addBooksFrame);
+                searchBooks.add(clearFields);
                 searchBooks.add(returnToMenu);
                 searchBooks.add(js);
                 setSize(1030,300);
@@ -819,6 +857,29 @@ public class BasicSwing extends JFrame{
             }
         });
 
+        bookGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (bookGetter.isValid()) {
+                    clearFields.doClick();
+                    String temp = (String) bookGetter.getSelectedItem();
+                    System.out.println(temp);
+                    temp = temp.substring(0, 4);//SUBJECT TO CHANGE. SAME WITH DEVICES
+                    field13s7.setText(temp);
+                    getBookButton.doClick();
+                }
+            }
+        });
+
+        refreshBookGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String fields[] = {field6s3.getText(),field4s3.getText(),field9s8.getText(),
+                        (String)statusChoices.getSelectedItem(),field17s8.getText(),
+                        field7s3.getText(),field8s8.getText(),field3s8.getText(),field5s8.getText(),
+                        field16s3.getText(),field1s8.getText()};
+                SQLStuff.updateBookGetter(bookGetter,fields);
+            }
+        });
+
         addBooksFrame.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchBooks.setVisible(false);
@@ -830,7 +891,10 @@ public class BasicSwing extends JFrame{
                 pricePanel.add(field16s3);
                 priceEqualLabel.setVisible(true);
 
+                addBooks.add(bookGetter);
+                addBooks.add(refreshBookGetter);
                 addBooks.add(itemIDPanel);
+                addBooks.add(a1);
                 addBooks.add(bookIDpanel);
                 addBooks.add(titlePanel);
                 addBooks.add(statusPanel);
@@ -843,9 +907,11 @@ public class BasicSwing extends JFrame{
                 addBooks.add(dopPanel);
                 clearFields.doClick();
 
+                refreshBookGetter.doClick();
                 addBooks.add(addBooksButton);
                 addBooks.add(getBookButton);
                 addBooks.add(editBooksQuery);
+                addBooks.add(clearFields);
                 addBooks.add(returnToBooks);
                 add(addBooks);
                 addBooks.setVisible(true);
@@ -899,6 +965,7 @@ public class BasicSwing extends JFrame{
                 searchGenericItems.add(genericItemOrderOptions);
                 searchGenericItems.add(genericItemQueryTrigger);
                 searchGenericItems.add(addGenericItemFrame);
+                searchGenericItems.add(clearFields);
                 searchGenericItems.add(returnToMenu);
                 searchGenericItems.add(js);
                 setSize(700,300);
@@ -945,6 +1012,28 @@ public class BasicSwing extends JFrame{
             }
         });
 
+        genericItemGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (genericItemGetter.isValid()) {
+                    clearFields.doClick();
+                    String temp = (String) genericItemGetter.getSelectedItem();
+                    System.out.println(temp);
+                    temp = temp.substring(0, 3);
+                    field6s3.setText(temp);
+                    getGenericItemButton.doClick();
+                }
+            }
+        });
+
+        refreshGenericItemGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String fields[] = {field6s3.getText(),field17s8.getText(),
+                        (String)statusChoices.getSelectedItem(),
+                        field16s3.getText(),field1s8.getText()};
+                SQLStuff.updateGenericItemGetter(genericItemGetter,fields);
+            }
+        });
+
         addGenericItemFrame.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchGenericItems.setVisible(false);
@@ -956,6 +1045,8 @@ public class BasicSwing extends JFrame{
                 pricePanel.add(field16s3);
                 priceEqualLabel.setVisible(true);
 
+                addGenericItems.add(genericItemGetter);
+                addGenericItems.add(refreshGenericItemGetter);
                 addGenericItems.add(itemIDPanel);
                 addGenericItems.add(itemDescriptionPanel);
                 addGenericItems.add(statusPanel);
@@ -963,9 +1054,11 @@ public class BasicSwing extends JFrame{
                 addGenericItems.add(dopPanel);
                 clearFields.doClick();
 
+                refreshGenericItemGetter.doClick();
                 addGenericItems.add(addGenericItemButton);
                 addGenericItems.add(getGenericItemButton);
                 addGenericItems.add(editGenericItemQuery);
+                addGenericItems.add(clearFields);
                 addGenericItems.add(returnToGenericItems);
                 add(addGenericItems);
                 addGenericItems.setVisible(true);
@@ -1028,6 +1121,7 @@ public class BasicSwing extends JFrame{
                 searchCheckout.add(checkoutQueryTrigger);
                 searchCheckout.add(addCheckoutFrame);
                 searchCheckout.add(searchOverdueButton);
+                searchCheckout.add(clearFields);
                 searchCheckout.add(returnToMenu);
                 searchCheckout.add(js);
                 setSize(850,350);
@@ -1089,27 +1183,58 @@ public class BasicSwing extends JFrame{
             }
         });
 
+        checkoutGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (checkoutGetter.isValid()) {
+                    clearFields.doClick();
+                    String temp = (String) checkoutGetter.getSelectedItem();
+                    field5s8.setText(temp.substring(0,10));
+                    field8s8.setText(temp.substring(11,19));
+                    field1s8.setText(temp.substring(20,29));
+                    field6s3.setText(temp.substring(30,33));
+                    getCheckoutButton.doClick();
+                }
+            }
+        });
+
+        refreshCheckoutGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String fields[] = {field1s8.getText(),field2s8.getText(),
+                        field3s8.getText(),field17s8.getText(),field6s3.getText(),
+                        field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
+                        field10s8.getText()};
+                SQLStuff.updateCheckoutGetter(checkoutGetter,fields);
+            }
+        });
+
         addCheckoutFrame.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchCheckout.setVisible(false);
-                setSize(1000,150);
+                setSize(1000,200);
 
                 pricePanel.add(priceEqualLabel);
                 pricePanel.add(field16s3);
                 priceEqualLabel.setVisible(true);
 
+                addCheckout.add(checkoutGetter);
+                addCheckout.add(refreshCheckoutGetter);
+                addCheckout.add(a1);
                 addCheckout.add(studentSidPanel);
                 addCheckout.add(fnamePanel);
                 addCheckout.add(lnamePanel);
                 addCheckout.add(itemDescriptionPanel);
+                addCheckout.add(a2);
                 addCheckout.add(itemIDPanel);
+                addCheckout.add(a3);
                 addCheckout.add(outDatePanel);
                 addCheckout.add(inDatePanel);
                 clearFields.doClick();
 
+                refreshCheckoutGetter.doClick();
                 addCheckout.add(addCheckoutButton);
                 addCheckout.add(getCheckoutButton);
                 addCheckout.add(editCheckoutQuery);
+                addCheckout.add(clearFields);
                 addCheckout.add(returnToCheckout);
                 add(addCheckout);
                 addCheckout.setVisible(true);
@@ -1165,6 +1290,7 @@ public class BasicSwing extends JFrame{
                 searchMaintenance.add(maintenanceOrderOptions);
                 searchMaintenance.add(maintenanceQueryTrigger);
                 searchMaintenance.add(addMaintenanceFrame);
+                searchMaintenance.add(clearFields);
                 searchMaintenance.add(returnToMenu);
                 searchMaintenance.add(js);
                 setSize(850,350);
@@ -1209,21 +1335,50 @@ public class BasicSwing extends JFrame{
             }
         });
 
+        maintenanceGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (maintenanceGetter.isValid()) {
+                    clearFields.doClick();
+                    String temp = (String) maintenanceGetter.getSelectedItem();
+                    System.out.println(temp);
+                    field5s8.setText(temp.substring(0,10));
+                    field8s8.setText(temp.substring(11,19));
+                    field6s3.setText(temp.substring(20,24));
+                    getMaintenanceButton.doClick();
+                }
+            }
+        });
+
+        refreshMaintenanceGetter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String fields[] = {field17s8.getText(),field6s3.getText(),field12s10.getText(),
+                        field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
+                        field10s8.getText()};
+                SQLStuff.updateMaintenanceGetter(maintenanceGetter,fields);
+            }
+        });
+
         addMaintenanceFrame.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 searchMaintenance.setVisible(false);
-                setSize(1000,150);
+                setSize(1000,200);
 
+                addMaintenance.add(maintenanceGetter);
+                addMaintenance.add(refreshMaintenanceGetter);
                 addMaintenance.add(itemDescriptionPanel);
+                addMaintenance.add(a1);
                 addMaintenance.add(itemIDPanel);
                 addMaintenance.add(maintDescriptionPanel);
+                addMaintenance.add(a2);
                 addMaintenance.add(outDatePanel);
                 addMaintenance.add(inDatePanel);
                 clearFields.doClick();
 
+                refreshMaintenanceGetter.doClick();
                 addMaintenance.add(addMaintenanceButton);
                 addMaintenance.add(getMaintenanceButton);
                 addMaintenance.add(editMaintenanceQuery);
+                addMaintenance.add(clearFields);
                 addMaintenance.add(returnToMaintenance);
                 add(addMaintenance);
                 addMaintenance.setVisible(true);
@@ -1268,13 +1423,6 @@ public class BasicSwing extends JFrame{
                 menu.setVisible(true);
             }
         });
-
-        //searchStudent.add(returnToMenu);
-        //searchDevices.add(returnToMenu);
-        //searchBooks.add(returnToMenu);
-        //searchCheckout.add(returnToMenu);
-        //searchMaintenance.add(returnToMenu);
-
 
         test1.add(menuLabel, BorderLayout.CENTER);
         test2.add(searchStudentButton);
